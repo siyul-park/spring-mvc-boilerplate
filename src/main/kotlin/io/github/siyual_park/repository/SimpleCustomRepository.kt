@@ -36,6 +36,7 @@ open class SimpleCustomRepository<T : Any, ID>(
 
     override fun count(): Long = warpException { simpleJpaRepository.count() }
 
+    @Transactional
     override fun deleteById(id: ID): Unit = findById(id)?.let { delete(it) } ?: Unit
 
     override fun delete(entity: T): Unit = warpException { simpleJpaRepository.delete(entity) }
@@ -49,7 +50,6 @@ open class SimpleCustomRepository<T : Any, ID>(
         ?.let { patch.apply(it) }
         ?.let { save(it) }
 
-    @Transactional
     override fun updateByIdOrFail(id: ID, patch: Patch<T>): T = updateById(id, patch) ?: throw NotFoundException()
 
     private inline fun <R> warpException(function: () -> R): R {
