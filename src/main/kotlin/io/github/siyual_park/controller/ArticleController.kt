@@ -6,6 +6,7 @@ import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -34,5 +35,11 @@ class ArticleController(
         @RequestBody payload: ArticleUpdatePayload
     ): Article {
         return articleRepository.updateByIdOrFail(id, jsonMergePatchFactory.create(payload))
+    }
+
+    @GetMapping("/{article_id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun find(@PathVariable("article_id") id: String): Article {
+        return articleRepository.findByIdOrFail(id)
     }
 }
