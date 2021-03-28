@@ -7,4 +7,4 @@ import javax.persistence.EntityManager
 @Repository
 class ArticleRepository(
     entityManager: EntityManager
-) : CustomRepository<Article, String> by SimpleCustomRepository(Article::class, entityManager)
+) : CustomRepository<Article, String> by SimpleCustomRepository.from(entityManager)
