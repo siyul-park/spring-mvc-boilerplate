@@ -37,5 +37,7 @@ class ArticleControllerTest {
         assertNotNull(article.id)
         assertEquals(article.title, payload.title)
         assertEquals(article.content, payload.content)
+        assertNotNull(article.createdAt)
+        assertNotNull(article.updatedAt)
     }
 }
