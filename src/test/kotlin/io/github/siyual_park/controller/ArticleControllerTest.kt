@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 import java.util.Optional
@@ -56,10 +57,28 @@ class ArticleControllerTest @Autowired constructor(
 
         val article: Article = objectMapper.readValue(result.response.contentAsString)
 
-        assertNotNull(article.id)
+        assertEquals(article.id, created.id)
         assertEquals(article.title, titleUpdatePayload.title?.get())
         assertEquals(article.content, created.content)
-        assertNotNull(article.createdAt)
+        assertEquals(article.createdAt, created.createdAt)
         assertNotNull(article.updatedAt)
+    }
+
+    @Test
+    fun testFindArticle() {
+        val created = ArticleCreatePayloadMockFactory.create()
+            .let { articleRepository.save(it.toArticle()) }
+
+        val result = mockMvc.get("/articles/${created.id}")
+            .andExpect { status { isOk() } }
+            .andReturn()
+
+        val article: Article = objectMapper.readValue(result.response.contentAsString)
+
+        assertEquals(article.id, created.id)
+        assertEquals(article.title, created.title)
+        assertEquals(article.content, created.content)
+        assertEquals(article.createdAt, created.createdAt)
+        assertEquals(article.updatedAt, created.updatedAt)
     }
 }
