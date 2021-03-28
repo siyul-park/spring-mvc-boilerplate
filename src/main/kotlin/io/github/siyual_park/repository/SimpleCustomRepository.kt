@@ -26,6 +26,8 @@ open class SimpleCustomRepository<T : Any, ID>(
 
     override fun findById(id: ID): T? = warpException { simpleJpaRepository.findByIdOrNull(id) }
 
+    override fun findByIdOrFail(id: ID): T = findById(id) ?: throw NotFoundException()
+
     override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id) }
 
     override fun findAll(): Iterable<T> = warpException { simpleJpaRepository.findAll() }

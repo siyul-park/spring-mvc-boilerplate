@@ -12,6 +12,8 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
 
     fun findById(id: ID): T?
 
+    fun findByIdOrFail(id: ID): T
+
     fun existsById(id: ID): Boolean
 
     fun findAll(): Iterable<T>
