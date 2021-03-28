@@ -29,4 +29,6 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
     fun deleteAll()
 
     fun updateById(id: ID, patch: Patch<T>): T?
+
+    fun updateByIdOrFail(id: ID, patch: Patch<T>): T
 }

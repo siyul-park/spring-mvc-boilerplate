@@ -1,5 +1,6 @@
 package io.github.siyual_park.repository
 
+import io.github.siyual_park.exception.NotFoundException
 import io.github.siyual_park.repository.patch.Patch
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 import org.springframework.data.repository.NoRepositoryBean
@@ -41,9 +42,12 @@ open class SimpleCustomRepository<T : Any, ID>(
     override fun deleteAll() = simpleJpaRepository.deleteAll()
 
     @Transactional
-    override fun updateById(id: ID, patch: Patch<T>): T = entityManager.find(clazz.java, id, LockModeType.PESSIMISTIC_WRITE)
-        .let { patch.apply(it) }
-        .let { save(it) }
+    override fun updateById(id: ID, patch: Patch<T>): T? = entityManager.find(clazz.java, id, LockModeType.PESSIMISTIC_WRITE)
+        ?.let { patch.apply(it) }
+        ?.let { save(it) }
+
+    @Transactional
+    override fun updateByIdOrFail(id: ID, patch: Patch<T>): T = updateById(id, patch) ?: throw NotFoundException()
 
     companion object {
         inline fun <reified T : Any, ID> from(entityManager: EntityManager) = SimpleCustomRepository<T, ID>(

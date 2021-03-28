@@ -11,13 +11,10 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 
 @ControllerTest
-class VersionControllerTest {
-
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
+class VersionControllerTest @Autowired constructor(
+    private val mockMvc: MockMvc,
+    private val objectMapper: ObjectMapper
+) {
 
     @Test
     fun testGetVersion() {

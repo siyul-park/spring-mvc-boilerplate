@@ -6,10 +6,9 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 
 @ControllerTest
-class PingControllerTest {
-
-    @Autowired
-    private lateinit var mockMvc: MockMvc
+class PingControllerTest @Autowired constructor(
+    private val mockMvc: MockMvc,
+) {
 
     @Test
     fun testPing() {
