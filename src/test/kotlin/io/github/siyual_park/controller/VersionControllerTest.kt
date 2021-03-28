@@ -22,9 +22,8 @@ class VersionControllerTest {
     @Test
     fun testGetVersion() {
         val result = mockMvc.get("/version")
-            .andExpect {
-                status { isOk() }
-            }.andReturn()
+            .andExpect { status { isOk() } }
+            .andReturn()
 
         val version: Version = objectMapper.readValue(result.response.contentAsString)
 
