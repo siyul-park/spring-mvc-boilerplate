@@ -11,16 +11,16 @@ import kotlin.reflect.KClass
 
 @Suppress("NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER")
 @NoRepositoryBean
-open class SimpleRepository<T : Any, ID>(
+open class SimpleCustomRepository<T : Any, ID>(
     private val clazz: KClass<T>,
     private val entityManager: EntityManager
-) : Repository<T, ID> {
+) : CustomRepository<T, ID> {
 
     private val simpleJpaRepository = SimpleJpaRepository<T, ID>(clazz.java, entityManager)
 
-    override fun <S : T?> save(entity: S): S = simpleJpaRepository.save(entity)
+    override fun <S : T> save(entity: S): S = simpleJpaRepository.save(entity)
 
-    override fun <S : T?> saveAll(entities: Iterable<S>): Iterable<S> = simpleJpaRepository.saveAll(entities)
+    override fun <S : T> saveAll(entities: Iterable<S>): Iterable<S> = simpleJpaRepository.saveAll(entities)
 
     override fun findById(id: ID): T? = simpleJpaRepository.findByIdOrNull(id)
 
@@ -46,7 +46,7 @@ open class SimpleRepository<T : Any, ID>(
         .let { save(it) }
 
     companion object {
-        inline fun <reified T : Any, ID> from(entityManager: EntityManager) = SimpleRepository<T, ID>(
+        inline fun <reified T : Any, ID> from(entityManager: EntityManager) = SimpleCustomRepository<T, ID>(
             T::class,
             entityManager
         )

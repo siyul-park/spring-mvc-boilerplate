@@ -5,10 +5,10 @@ import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.Repository
 
 @NoRepositoryBean
-interface Repository<T : Any, ID> : Repository<T, ID> {
-    fun <S : T?> save(entity: S): S
+interface CustomRepository<T : Any, ID> : Repository<T, ID> {
+    fun <S : T> save(entity: S): S
 
-    fun <S : T?> saveAll(entities: Iterable<S>): Iterable<S>
+    fun <S : T> saveAll(entities: Iterable<S>): Iterable<S>
 
     fun findById(id: ID): T?
 
