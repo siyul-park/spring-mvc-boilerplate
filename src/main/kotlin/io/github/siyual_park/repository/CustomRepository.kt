@@ -1,6 +1,8 @@
 package io.github.siyual_park.repository
 
 import io.github.siyual_park.repository.patch.Patch
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.Repository
@@ -44,6 +46,9 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
 
     @Transactional
     fun existsById(id: ID): Boolean
+
+    @Transactional
+    fun findAll(pageable: Pageable): Page<T>
 
     @Transactional
     fun findAll(): Iterable<T>

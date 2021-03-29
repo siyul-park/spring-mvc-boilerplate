@@ -4,6 +4,8 @@ import io.github.siyual_park.exception.ConflictException
 import io.github.siyual_park.exception.NotFoundException
 import io.github.siyual_park.repository.patch.Patch
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
@@ -76,6 +78,8 @@ class SimpleCustomRepository<T : Any, ID>(
         ?.also { entityManager.lock(it, lockMode) }
 
     override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id!!) }
+
+    override fun findAll(pageable: Pageable): Page<T> = warpException { simpleJpaRepository.findAll(pageable) }
 
     override fun findAll(): Iterable<T> = warpException { simpleJpaRepository.findAll() }
 
