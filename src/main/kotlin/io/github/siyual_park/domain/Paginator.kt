@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity
 import java.util.stream.Stream
 
 class Paginator<T : Any, ID>(
-    private val repository: CustomRepository<T, ID>
+    private val repository: CustomRepository<T, ID, *>
 ) {
     fun query(
         offset: Int? = null,
