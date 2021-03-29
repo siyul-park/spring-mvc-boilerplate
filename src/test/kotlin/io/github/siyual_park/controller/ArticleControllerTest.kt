@@ -9,10 +9,12 @@ import io.github.siyual_park.model.article.Article
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
@@ -81,5 +83,17 @@ class ArticleControllerTest @Autowired constructor(
         assertEquals(article.content, created.content)
         assertEquals(article.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
         assertEquals(article.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
+    }
+
+    @Test
+    fun testDeleteArticle() {
+        val created = ArticleCreatePayloadMockFactory.create()
+            .let { articleRepository.save(it.toArticle()) }
+
+        mockMvc.delete("/articles/${created.id}")
+            .andExpect { status { isNoContent() } }
+            .andReturn()
+
+        assertFalse(created.id?.let { articleRepository.existsById(it) } ?: false)
     }
 }

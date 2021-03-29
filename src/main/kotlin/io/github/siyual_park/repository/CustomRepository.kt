@@ -12,29 +12,32 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
 
     @Transactional
     fun <S : T> saveAll(entities: Iterable<S>): Iterable<S>
-    @Transactional
 
-    fun findById(id: ID): T?
     @Transactional
-
     fun findByIdOrFail(id: ID): T
-    @Transactional
 
+    @Transactional
+    fun findById(id: ID): T?
+
+    @Transactional
     fun existsById(id: ID): Boolean
-    @Transactional
 
+    @Transactional
     fun findAll(): Iterable<T>
-    @Transactional
 
+    @Transactional
     fun findAllById(ids: Iterable<ID>): Iterable<T>
-    @Transactional
 
+    @Transactional
     fun count(): Long
-    @Transactional
 
+    @Transactional
+    fun deleteByIdOrFail(id: ID)
+
+    @Transactional
     fun deleteById(id: ID)
-    @Transactional
 
+    @Transactional
     fun delete(entity: T)
 
     @Transactional
@@ -44,8 +47,8 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
     fun deleteAll()
 
     @Transactional
-    fun updateById(id: ID, patch: Patch<T>): T?
+    fun updateByIdOrFail(id: ID, patch: Patch<T>): T
 
     @Transactional
-    fun updateByIdOrFail(id: ID, patch: Patch<T>): T
+    fun updateById(id: ID, patch: Patch<T>): T?
 }

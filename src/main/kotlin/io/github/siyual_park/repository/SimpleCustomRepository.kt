@@ -23,9 +23,9 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun <S : T> saveAll(entities: Iterable<S>): Iterable<S> = warpException { simpleJpaRepository.saveAll(entities) }
 
-    override fun findById(id: ID): T? = warpException { simpleJpaRepository.findByIdOrNull(id) }
-
     override fun findByIdOrFail(id: ID): T = findById(id) ?: throw NotFoundException()
+
+    override fun findById(id: ID): T? = warpException { simpleJpaRepository.findByIdOrNull(id) }
 
     override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id) }
 
@@ -35,6 +35,8 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun count(): Long = warpException { simpleJpaRepository.count() }
 
+    override fun deleteByIdOrFail(id: ID): Unit = delete(findByIdOrFail(id))
+
     override fun deleteById(id: ID): Unit = findById(id)?.let { delete(it) } ?: Unit
 
     override fun delete(entity: T): Unit = warpException { simpleJpaRepository.delete(entity) }
@@ -43,11 +45,11 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun deleteAll(): Unit = warpException { simpleJpaRepository.deleteAll() }
 
+    override fun updateByIdOrFail(id: ID, patch: Patch<T>): T = updateById(id, patch) ?: throw NotFoundException()
+
     override fun updateById(id: ID, patch: Patch<T>): T? = warpException { entityManager.find(clazz.java, id, LockModeType.PESSIMISTIC_WRITE) }
         ?.let { patch.apply(it) }
         ?.let { save(it) }
-
-    override fun updateByIdOrFail(id: ID, patch: Patch<T>): T = updateById(id, patch) ?: throw NotFoundException()
 
     private inline fun <R> warpException(function: () -> R): R {
         try {
