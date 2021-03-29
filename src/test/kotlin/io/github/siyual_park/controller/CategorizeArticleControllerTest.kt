@@ -1,6 +1,5 @@
 package io.github.siyual_park.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.siyual_park.factory.ArticleCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
 import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
@@ -18,7 +17,6 @@ import kotlin.math.ceil
 @ControllerTest
 class CategorizeArticleControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
-    private val objectMapper: ObjectMapper,
     private val articleRepository: ArticleRepository,
     private val categoryRepository: CategoryRepository
 ) {
