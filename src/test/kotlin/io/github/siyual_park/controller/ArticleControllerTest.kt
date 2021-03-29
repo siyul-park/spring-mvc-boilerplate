@@ -48,7 +48,7 @@ class ArticleControllerTest @Autowired constructor(
     @Test
     fun testUpdateArticle() {
         val created = ArticleCreatePayloadMockFactory.create()
-            .let { articleRepository.save(it.toArticle()) }
+            .let { articleRepository.create(it.toArticle()) }
 
         val titleUpdatePayload = ArticleUpdatePayload(
             Optional.of(RandomFactory.createString(10)),
@@ -70,7 +70,7 @@ class ArticleControllerTest @Autowired constructor(
     @Test
     fun testFindArticle() {
         val created = ArticleCreatePayloadMockFactory.create()
-            .let { articleRepository.save(it.toArticle()) }
+            .let { articleRepository.create(it.toArticle()) }
 
         val result = mockMvc.get("/articles/${created.id}")
             .andExpect { status { isOk() } }
@@ -88,7 +88,7 @@ class ArticleControllerTest @Autowired constructor(
     @Test
     fun testDeleteArticle() {
         val created = ArticleCreatePayloadMockFactory.create()
-            .let { articleRepository.save(it.toArticle()) }
+            .let { articleRepository.create(it.toArticle()) }
 
         mockMvc.delete("/articles/${created.id}")
             .andExpect { status { isNoContent() } }
