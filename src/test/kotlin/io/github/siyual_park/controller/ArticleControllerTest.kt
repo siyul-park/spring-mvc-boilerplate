@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 import java.time.Instant
 import java.util.Optional
+import kotlin.math.ceil
 
 @ControllerTest
 class ArticleControllerTest @Autowired constructor(
@@ -98,7 +99,7 @@ class ArticleControllerTest @Autowired constructor(
                 status { isOk() }
                 header {
                     string("Total-Count", count.toString())
-                    string("Total-Page", (count / 20 + 1).toString())
+                    string("Total-Page", ceil(count / 20.0).toString())
                 }
             }
             .andReturn()
