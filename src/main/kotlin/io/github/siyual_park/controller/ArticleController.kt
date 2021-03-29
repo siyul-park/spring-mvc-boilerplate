@@ -5,6 +5,7 @@ import io.github.siyual_park.model.article.ArticleCreatePayload
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
+import io.swagger.annotations.Api
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
+@Api
 @RestController
 @RequestMapping("/articles")
 class ArticleController(

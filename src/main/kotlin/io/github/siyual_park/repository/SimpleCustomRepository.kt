@@ -6,14 +6,13 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
 import javax.persistence.LockModeType
 import kotlin.reflect.KClass
 
 @Suppress("NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER")
 @NoRepositoryBean
-open class SimpleCustomRepository<T : Any, ID>(
+class SimpleCustomRepository<T : Any, ID>(
     private val clazz: KClass<T>,
     private val entityManager: EntityManager
 ) : CustomRepository<T, ID> {
@@ -36,7 +35,6 @@ open class SimpleCustomRepository<T : Any, ID>(
 
     override fun count(): Long = warpException { simpleJpaRepository.count() }
 
-    @Transactional
     override fun deleteById(id: ID): Unit = findById(id)?.let { delete(it) } ?: Unit
 
     override fun delete(entity: T): Unit = warpException { simpleJpaRepository.delete(entity) }
@@ -45,7 +43,6 @@ open class SimpleCustomRepository<T : Any, ID>(
 
     override fun deleteAll(): Unit = warpException { simpleJpaRepository.deleteAll() }
 
-    @Transactional
     override fun updateById(id: ID, patch: Patch<T>): T? = warpException { entityManager.find(clazz.java, id, LockModeType.PESSIMISTIC_WRITE) }
         ?.let { patch.apply(it) }
         ?.let { save(it) }
