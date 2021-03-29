@@ -100,6 +100,8 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun findAll(spec: Specification<T>): Iterable<T> = warpException { simpleJpaRepository.findAll(spec) }
 
+    override fun count(spec: Specification<T>): Long = warpException { simpleJpaRepository.count(spec) }
+
     override fun count(): Long = warpException { simpleJpaRepository.count() }
 
     override fun deleteByIdOrFail(id: ID): Unit = delete(findByIdOrFail(id))

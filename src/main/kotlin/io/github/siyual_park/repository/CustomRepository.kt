@@ -65,6 +65,9 @@ interface CustomRepository<T : Any, ID> {
     fun count(): Long
 
     @Transactional
+    fun count(spec: Specification<T>): Long
+
+    @Transactional
     fun deleteByIdOrFail(id: ID)
 
     @Transactional
