@@ -99,7 +99,7 @@ class ArticleControllerTest @Autowired constructor(
                 status { isOk() }
                 header {
                     string("Total-Count", count.toString())
-                    string("Total-Page", ceil(count / 20.0).toString())
+                    string("Total-Page", ceil(count / 20.0).toInt().toString())
                 }
             }
             .andReturn()
