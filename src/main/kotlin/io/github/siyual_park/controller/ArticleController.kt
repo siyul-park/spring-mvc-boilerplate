@@ -48,7 +48,6 @@ class ArticleController(
     }
 
     @GetMapping("")
-    @ResponseStatus(HttpStatus.OK)
     fun findAll(
         @RequestParam("page", required = false) page: Int?,
         @RequestParam("per_page", required = false) perPage: Int?
