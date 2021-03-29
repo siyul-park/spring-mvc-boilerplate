@@ -8,4 +8,5 @@ data class ArticleUpdatePayload(
     var title: Optional<String>? = null,
     var content: Optional<String>? = null,
     var contentType: Optional<MimeType>? = null,
+    var categoryId: Optional<String>? = null,
 ) : UpdatePayload

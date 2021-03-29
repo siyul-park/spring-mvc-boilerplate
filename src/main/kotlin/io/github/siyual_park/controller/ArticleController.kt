@@ -9,6 +9,7 @@ import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.github.siyual_park.repository.patch.LambdaPatch
+import io.github.siyual_park.repository.patch.Patch
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
@@ -31,7 +32,7 @@ import java.util.stream.Stream
 @RequestMapping("/articles")
 class ArticleController(
     private val articleRepository: ArticleRepository,
-    categoryRepository: CategoryRepository,
+    private val categoryRepository: CategoryRepository,
     private val jsonMergePatchFactory: JsonMergePatchFactory
 ) {
     private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
@@ -49,7 +50,21 @@ class ArticleController(
         @PathVariable("article-id") id: String,
         @RequestBody payload: ArticleUpdatePayload
     ): Article {
-        return articleRepository.updateByIdOrFail(id, jsonMergePatchFactory.create(payload))
+        val jsonMergePatch: Patch<Article> = jsonMergePatchFactory.create(payload)
+
+        return articleRepository.updateByIdOrFail(
+            id,
+            LambdaPatch.from {
+                payload.categoryId?.let { optional ->
+                    optional.ifPresent {
+                        category = categoryRepository.findByIdOrFail(it)
+                    }
+                    payload.categoryId = null
+                }
+
+                jsonMergePatch.apply(this)
+            }
+        )
     }
 
     @GetMapping("")
