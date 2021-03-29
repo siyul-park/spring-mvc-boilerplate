@@ -6,11 +6,15 @@ import io.github.siyual_park.expansion.readValue
 import io.github.siyual_park.factory.ArticleCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
 import io.github.siyual_park.model.article.Article
+import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
+import io.github.siyual_park.model.category.Category
 import io.github.siyual_park.repository.ArticleRepository
+import io.github.siyual_park.repository.CategoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
@@ -26,12 +30,24 @@ import kotlin.math.ceil
 class ArticleControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
-    private val articleRepository: ArticleRepository
+    private val articleRepository: ArticleRepository,
+    private val categoryRepository: CategoryRepository
 ) {
 
+    private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
+
+    private lateinit var category: Category
+    private lateinit var articleCreatePayloadMockFactory: ArticleCreatePayloadMockFactory
+
+    @BeforeEach
+    fun prepare() {
+        category = categoryRepository.create(Category(RandomFactory.createString(10)))
+        articleCreatePayloadMockFactory = ArticleCreatePayloadMockFactory(category)
+    }
+
     @Test
-    fun testCreateArticle() {
-        val payload = ArticleCreatePayloadMockFactory.create()
+    fun testCreate() {
+        val payload = articleCreatePayloadMockFactory.create()
 
         val result = mockMvc.post("/articles") { json(objectMapper.writeValueAsString(payload)) }
             .andExpect { status { isCreated() } }
@@ -48,9 +64,9 @@ class ArticleControllerTest @Autowired constructor(
     }
 
     @Test
-    fun testUpdateArticle() {
-        val created = ArticleCreatePayloadMockFactory.create()
-            .let { articleRepository.create(it.toArticle()) }
+    fun testUpdate() {
+        val created = articleCreatePayloadMockFactory.create()
+            .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
 
         val titleUpdatePayload = ArticleUpdatePayload(
             title = Optional.of(RandomFactory.createString(10))
@@ -70,9 +86,9 @@ class ArticleControllerTest @Autowired constructor(
     }
 
     @Test
-    fun testFindArticle() {
-        val created = ArticleCreatePayloadMockFactory.create()
-            .let { articleRepository.create(it.toArticle()) }
+    fun testFind() {
+        val created = articleCreatePayloadMockFactory.create()
+            .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
 
         val result = mockMvc.get("/articles/${created.id}")
             .andExpect { status { isOk() } }
@@ -89,9 +105,9 @@ class ArticleControllerTest @Autowired constructor(
     }
 
     @Test
-    fun testFindAllArticle() {
-        ArticleCreatePayloadMockFactory.create()
-            .let { articleRepository.create(it.toArticle()) }
+    fun testFindAll() {
+        articleCreatePayloadMockFactory.create()
+            .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
         val count = articleRepository.count()
 
         mockMvc.get("/articles")
@@ -106,9 +122,9 @@ class ArticleControllerTest @Autowired constructor(
     }
 
     @Test
-    fun testDeleteArticle() {
-        val created = ArticleCreatePayloadMockFactory.create()
-            .let { articleRepository.create(it.toArticle()) }
+    fun testDelete() {
+        val created = articleCreatePayloadMockFactory.create()
+            .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
 
         mockMvc.delete("/articles/${created.id}")
             .andExpect { status { isNoContent() } }

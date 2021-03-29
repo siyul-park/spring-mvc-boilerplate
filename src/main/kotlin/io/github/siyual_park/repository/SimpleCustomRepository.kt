@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import javax.persistence.EntityManager
 import javax.persistence.LockModeType
+import javax.persistence.PersistenceException
 import kotlin.reflect.KClass
 
 @NoRepositoryBean
@@ -25,11 +26,13 @@ class SimpleCustomRepository<T : Any, ID>(
     // TODO(제거 하기)
     private val simpleJpaRepository = SimpleJpaRepository<T, ID>(clazz.java, entityManager)
 
-    override fun <S : T> create(entity: S): S = if (entityInformation.isNew(entity)) {
-        entityManager.persist(entity)
-        entity
-    } else {
-        throw ConflictException()
+    override fun <S : T> create(entity: S): S = warpException {
+        if (entityInformation.isNew(entity)) {
+            entityManager.persist(entity)
+            entity
+        } else {
+            throw ConflictException()
+        }
     }
 
     override fun <S : T> createAll(entities: Iterable<S>): Iterable<S> = mutableListOf<S>().apply {
@@ -42,17 +45,21 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun updateById(id: ID, patch: Patch<T>): T? = findById(id, LockModeType.PESSIMISTIC_WRITE)?.let { update(it, patch) }
 
-    override fun update(entity: T, patch: Patch<T>): T = if (!entityInformation.isNew(entity)) {
-        entityManager.merge(patch.apply(entity))
-    } else {
-        throw NotFoundException()
+    override fun update(entity: T, patch: Patch<T>): T = warpException {
+        if (!entityInformation.isNew(entity)) {
+            entityManager.merge(patch.apply(entity))
+        } else {
+            throw NotFoundException()
+        }
     }
 
-    override fun <S : T> upsert(entity: S): S = if (entityInformation.isNew(entity)) {
-        entityManager.persist(entity)
-        entity
-    } else {
-        entityManager.merge(entity)
+    override fun <S : T> upsert(entity: S): S = warpException {
+        if (entityInformation.isNew(entity)) {
+            entityManager.persist(entity)
+            entity
+        } else {
+            entityManager.merge(entity)
+        }
     }
 
     override fun <S : T> upsertAll(entities: Iterable<S>): Iterable<S> = mutableListOf<S>().apply {
@@ -75,7 +82,11 @@ class SimpleCustomRepository<T : Any, ID>(
                 false -> null
             }
         }
-        ?.also { entityManager.lock(it, lockMode) }
+        ?.also {
+            if (lockMode != null) {
+                entityManager.lock(it, lockMode)
+            }
+        }
 
     override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id!!) }
 
@@ -104,6 +115,8 @@ class SimpleCustomRepository<T : Any, ID>(
             return function()
         } catch (e: EmptyResultDataAccessException) {
             throw NotFoundException(e.message)
+        } catch (e: PersistenceException) {
+            throw ConflictException(e.message)
         }
     }
 

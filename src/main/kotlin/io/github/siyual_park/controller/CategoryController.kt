@@ -1,14 +1,11 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.Paginator
-import io.github.siyual_park.model.article.Article
-import io.github.siyual_park.model.article.ArticleCreatePayload
-import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
-import io.github.siyual_park.repository.ArticleRepository
+import io.github.siyual_park.model.category.Category
+import io.github.siyual_park.model.category.CategoryCreatePayload
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
-import io.github.siyual_park.repository.patch.LambdaPatch
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
@@ -28,28 +25,27 @@ import java.util.stream.Stream
 
 @Api
 @RestController
-@RequestMapping("/articles")
-class ArticleController(
-    private val articleRepository: ArticleRepository,
-    categoryRepository: CategoryRepository,
+@RequestMapping("/categories")
+class CategoryController(
+    private val categoryRepository: CategoryRepository,
     private val jsonMergePatchFactory: JsonMergePatchFactory
 ) {
-    private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
-    private val paginator = Paginator(articleRepository)
+
+    private val paginator = Paginator(categoryRepository)
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody payload: ArticleCreatePayload): Article {
-        return articleRepository.create(articleCreatePayloadMapper.map(payload))
+    fun create(@RequestBody payload: CategoryCreatePayload): Category {
+        return categoryRepository.create(payload.toCategory())
     }
 
-    @PatchMapping("/{article-id}")
+    @PatchMapping("/{category-id}")
     @ResponseStatus(HttpStatus.OK)
     fun update(
-        @PathVariable("article-id") id: String,
+        @PathVariable("category-id") id: String,
         @RequestBody payload: ArticleUpdatePayload
-    ): Article {
-        return articleRepository.updateByIdOrFail(id, jsonMergePatchFactory.create(payload))
+    ): Category {
+        return categoryRepository.updateByIdOrFail(id, jsonMergePatchFactory.create(payload))
     }
 
     @GetMapping("")
@@ -58,7 +54,7 @@ class ArticleController(
         @RequestParam("per_page", required = false) limit: Int?,
         @RequestParam("sort", required = false) property: String?,
         @RequestParam("order", required = false) direction: Sort.Direction?
-    ): ResponseEntity<Stream<Article>> {
+    ): ResponseEntity<Stream<Category>> {
         return paginator.query(
             offset = offset,
             limit = limit,
@@ -74,15 +70,21 @@ class ArticleController(
         JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
     )
 
-    @GetMapping("/{article-id}")
+    @GetMapping("/{category-id}")
     @ResponseStatus(HttpStatus.OK)
-    fun find(@PathVariable("article-id") id: String): Article {
-        return articleRepository.updateByIdOrFail(id, LambdaPatch.from { views += 1 })
+    fun findById(@PathVariable("category-id") id: String): Category {
+        return categoryRepository.findByIdOrFail(id)
     }
 
-    @DeleteMapping("/{article-id}")
+    @GetMapping("/@{category-name}")
+    @ResponseStatus(HttpStatus.OK)
+    fun findByName(@PathVariable("category-name") name: String): Category {
+        return categoryRepository.findByNameOrFail(name)
+    }
+
+    @DeleteMapping("/{category-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable("article-id") id: String) {
-        return articleRepository.deleteByIdOrFail(id)
+    fun delete(@PathVariable("category-id") id: String) {
+        return categoryRepository.deleteByIdOrFail(id)
     }
 }
