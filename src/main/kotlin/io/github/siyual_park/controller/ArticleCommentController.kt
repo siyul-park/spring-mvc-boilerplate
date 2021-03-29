@@ -8,7 +8,6 @@ import io.github.siyual_park.repository.specification.CommentSpecification
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
-import org.springframework.jdbc.support.JdbcUtils
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -49,6 +48,6 @@ class ArticleCommentController(
         direction: Sort.Direction?
     ) = Sort.by(
         direction ?: Sort.Direction.ASC,
-        JdbcUtils.convertUnderscoreNameToPropertyName(property ?: Comment::createdAt.name)
+        property ?: Comment::createdAt.name
     )
 }

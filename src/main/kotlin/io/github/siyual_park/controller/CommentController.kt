@@ -1,6 +1,5 @@
 package io.github.siyual_park.controller
 
-import io.github.siyual_park.domain.Paginator
 import io.github.siyual_park.model.comment.Comment
 import io.github.siyual_park.model.comment.CommentCreatePayload
 import io.github.siyual_park.model.comment.CommentCreatePayloadMapper
@@ -29,7 +28,6 @@ class CommentController(
     private val jsonMergePatchFactory: JsonMergePatchFactory
 ) {
     private val commentCreatePayloadMapper = CommentCreatePayloadMapper(articleRepository)
-    private val paginator = Paginator(commentRepository)
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)

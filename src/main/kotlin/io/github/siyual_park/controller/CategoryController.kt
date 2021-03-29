@@ -10,7 +10,6 @@ import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.jdbc.support.JdbcUtils
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -85,6 +84,6 @@ class CategoryController(
         direction: Sort.Direction?
     ) = Sort.by(
         direction ?: Sort.Direction.ASC,
-        JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
+        property ?: "id"
     )
 }
