@@ -41,6 +41,7 @@ class ArticleControllerTest @Autowired constructor(
         assertNotNull(article.id)
         assertEquals(article.title, payload.title)
         assertEquals(article.content, payload.content)
+        assertEquals(article.contentType, payload.contentType)
         assertNotNull(article.createdAt)
         assertNotNull(article.updatedAt)
     }
@@ -63,6 +64,7 @@ class ArticleControllerTest @Autowired constructor(
         assertEquals(article.id, created.id)
         assertEquals(article.title, titleUpdatePayload.title?.get())
         assertEquals(article.content, created.content)
+        assertEquals(article.contentType, created.contentType)
         assertEquals(article.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
         assertEquals(article.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
     }
@@ -81,6 +83,7 @@ class ArticleControllerTest @Autowired constructor(
         assertEquals(article.id, created.id)
         assertEquals(article.title, created.title)
         assertEquals(article.content, created.content)
+        assertEquals(article.contentType, created.contentType)
         assertEquals(article.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
         assertEquals(article.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
     }
