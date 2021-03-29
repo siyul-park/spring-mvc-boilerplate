@@ -66,14 +66,6 @@ class ArticleController(
         )
     }
 
-    private fun createSort(
-        property: String?,
-        direction: Sort.Direction?
-    ) = Sort.by(
-        direction ?: Sort.Direction.ASC,
-        JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
-    )
-
     @GetMapping("/{article-id}")
     @ResponseStatus(HttpStatus.OK)
     fun find(@PathVariable("article-id") id: String): Article {
@@ -85,4 +77,12 @@ class ArticleController(
     fun delete(@PathVariable("article-id") id: String) {
         return articleRepository.deleteByIdOrFail(id)
     }
+
+    private fun createSort(
+        property: String?,
+        direction: Sort.Direction?
+    ) = Sort.by(
+        direction ?: Sort.Direction.ASC,
+        JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
+    )
 }

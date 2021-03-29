@@ -62,14 +62,6 @@ class CategoryController(
         )
     }
 
-    private fun createSort(
-        property: String?,
-        direction: Sort.Direction?
-    ) = Sort.by(
-        direction ?: Sort.Direction.ASC,
-        JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
-    )
-
     @GetMapping("/{category-id}")
     @ResponseStatus(HttpStatus.OK)
     fun findById(@PathVariable("category-id") id: String): Category {
@@ -87,4 +79,12 @@ class CategoryController(
     fun delete(@PathVariable("category-id") id: String) {
         return categoryRepository.deleteByIdOrFail(id)
     }
+
+    private fun createSort(
+        property: String?,
+        direction: Sort.Direction?
+    ) = Sort.by(
+        direction ?: Sort.Direction.ASC,
+        JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
+    )
 }
