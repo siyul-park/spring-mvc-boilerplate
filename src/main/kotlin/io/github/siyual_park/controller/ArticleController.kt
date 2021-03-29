@@ -59,17 +59,20 @@ class ArticleController(
         @RequestParam("sort", required = false) property: String?,
         @RequestParam("order", required = false) direction: Sort.Direction?
     ): ResponseEntity<Stream<Article>> {
-        val sort = Sort.by(
-            direction ?: Sort.Direction.ASC,
-            JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
-        )
-
         return paginator.query(
             offset = offset,
             limit = limit,
-            sort = sort
+            sort = createSort(property, direction)
         )
     }
+
+    private fun createSort(
+        property: String?,
+        direction: Sort.Direction?
+    ) = Sort.by(
+        direction ?: Sort.Direction.ASC,
+        JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
+    )
 
     @GetMapping("/{article-id}")
     @ResponseStatus(HttpStatus.OK)

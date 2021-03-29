@@ -55,22 +55,31 @@ class CategoryController(
         @RequestParam("sort", required = false) property: String?,
         @RequestParam("order", required = false) direction: Sort.Direction?
     ): ResponseEntity<Stream<Category>> {
-        val sort = Sort.by(
-            direction ?: Sort.Direction.ASC,
-            JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
-        )
-
         return paginator.query(
             offset = offset,
             limit = limit,
-            sort = sort
+            sort = createSort(property, direction)
         )
     }
 
+    private fun createSort(
+        property: String?,
+        direction: Sort.Direction?
+    ) = Sort.by(
+        direction ?: Sort.Direction.ASC,
+        JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
+    )
+
     @GetMapping("/{category-id}")
     @ResponseStatus(HttpStatus.OK)
-    fun find(@PathVariable("category-id") id: String): Category {
+    fun findById(@PathVariable("category-id") id: String): Category {
         return categoryRepository.findByIdOrFail(id)
+    }
+
+    @GetMapping("/@{category-name}")
+    @ResponseStatus(HttpStatus.OK)
+    fun findByName(@PathVariable("category-name") name: String): Category {
+        return categoryRepository.findByNameOrFail(name)
     }
 
     @DeleteMapping("/{category-id}")

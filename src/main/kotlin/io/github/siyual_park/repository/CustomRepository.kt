@@ -5,12 +5,11 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.repository.NoRepositoryBean
-import org.springframework.data.repository.Repository
 import org.springframework.transaction.annotation.Transactional
 import javax.persistence.LockModeType
 
 @NoRepositoryBean
-interface CustomRepository<T : Any, ID> : Repository<T, ID> {
+interface CustomRepository<T : Any, ID> {
     @Transactional
     fun <S : T> create(entity: S): S
 

@@ -68,11 +68,28 @@ class CategoryControllerTest @Autowired constructor(
     }
 
     @Test
-    fun testFind() {
+    fun testFindById() {
         val created = categoryCreatePayloadMockFactory.create()
             .let { categoryRepository.create(it.toCategory()) }
 
         val result = mockMvc.get("/categories/${created.id}")
+            .andExpect { status { isOk() } }
+            .andReturn()
+
+        val category: Category = objectMapper.readValue(result.response.contentAsString)
+
+        assertEquals(category.id, created.id)
+        assertEquals(category.name, created.name)
+        assertEquals(category.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
+        assertEquals(category.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
+    }
+
+    @Test
+    fun testFindByName() {
+        val created = categoryCreatePayloadMockFactory.create()
+            .let { categoryRepository.create(it.toCategory()) }
+
+        val result = mockMvc.get("/categories/@${created.name}")
             .andExpect { status { isOk() } }
             .andReturn()
 

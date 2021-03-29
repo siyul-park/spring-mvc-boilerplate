@@ -82,7 +82,11 @@ class SimpleCustomRepository<T : Any, ID>(
                 false -> null
             }
         }
-        ?.also { entityManager.lock(it, lockMode) }
+        ?.also {
+            if (lockMode != null) {
+                entityManager.lock(it, lockMode)
+            }
+        }
 
     override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id!!) }
 
