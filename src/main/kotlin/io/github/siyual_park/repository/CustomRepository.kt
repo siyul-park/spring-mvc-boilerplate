@@ -15,10 +15,10 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
     fun <S : T> saveAll(entities: Iterable<S>): Iterable<S>
 
     @Transactional
-    fun findByIdOrFail(id: ID): T
+    fun findByIdOrFail(id: ID, lockMode: LockModeType? = null): T
 
     @Transactional
-    fun findById(id: ID): T?
+    fun findById(id: ID, lockMode: LockModeType? = null): T?
 
     @Transactional
     fun existsById(id: ID): Boolean
@@ -54,5 +54,10 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
     fun updateById(id: ID, patch: Patch<T>): T?
 
     @Transactional
-    fun <R> lock(entity: T, lockMode: LockModeType, function: (T) -> R): R
+    fun update(entity: T, patch: Patch<T>): T
+
+    @Transactional
+    fun lock(entity: T, lockMode: LockModeType): T
 }
+
+inline fun <T : Any, ID, R> CustomRepository<T, ID>.lock(entity: T, lockMode: LockModeType, function: (T) -> R): R = function(lock(entity, lockMode))

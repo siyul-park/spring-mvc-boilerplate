@@ -3,9 +3,9 @@ package io.github.siyual_park.repository
 import io.github.siyual_park.exception.NotFoundException
 import io.github.siyual_park.repository.patch.Patch
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 import org.springframework.data.repository.NoRepositoryBean
-import org.springframework.data.repository.findByIdOrNull
 import javax.persistence.EntityManager
 import javax.persistence.LockModeType
 import kotlin.reflect.KClass
@@ -13,19 +13,20 @@ import kotlin.reflect.KClass
 @Suppress("NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER")
 @NoRepositoryBean
 class SimpleCustomRepository<T : Any, ID>(
-    clazz: KClass<T>,
+    private val clazz: KClass<T>,
     private val entityManager: EntityManager
 ) : CustomRepository<T, ID> {
 
     private val simpleJpaRepository = SimpleJpaRepository<T, ID>(clazz.java, entityManager)
+    private val entityInformation = JpaEntityInformationSupport.getEntityInformation(clazz.java, entityManager)
 
     override fun <S : T> save(entity: S): S = warpException { simpleJpaRepository.save(entity) }
 
     override fun <S : T> saveAll(entities: Iterable<S>): Iterable<S> = warpException { simpleJpaRepository.saveAll(entities) }
 
-    override fun findByIdOrFail(id: ID): T = findById(id) ?: throw NotFoundException()
+    override fun findByIdOrFail(id: ID, lockMode: LockModeType?): T = findById(id, lockMode) ?: throw NotFoundException()
 
-    override fun findById(id: ID): T? = warpException { simpleJpaRepository.findByIdOrNull(id) }
+    override fun findById(id: ID, lockMode: LockModeType?): T? = warpException { entityManager.find(clazz.java, id, lockMode) }
 
     override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id) }
 
@@ -47,16 +48,20 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun updateByIdOrFail(id: ID, patch: Patch<T>): T = updateById(id, patch) ?: throw NotFoundException()
 
-    override fun updateById(id: ID, patch: Patch<T>): T? = findById(id)
-        ?.let { entity ->
-            lock(entity, LockModeType.PESSIMISTIC_WRITE) {
-                save(patch.apply(it))
-            }
-        }
+    override fun updateById(id: ID, patch: Patch<T>): T? = findById(id, LockModeType.PESSIMISTIC_WRITE)?.let { update(it, patch) }
 
-    override fun <R> lock(entity: T, lockMode: LockModeType, function: (T) -> R): R {
+    override fun update(entity: T, patch: Patch<T>): T {
+        if (entityInformation.isNew(entity)) {
+            throw NotFoundException()
+        }
+        return save(patch.apply(entity))
+    }
+
+    override fun lock(entity: T, lockMode: LockModeType): T = try {
         entityManager.lock(entity, lockMode)
-        return function(entity)
+        entity
+    } catch (e: IllegalArgumentException) {
+        throw NotFoundException(e.message)
     }
 
     private inline fun <R> warpException(function: () -> R): R {
