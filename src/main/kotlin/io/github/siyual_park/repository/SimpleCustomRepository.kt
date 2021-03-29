@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 @Suppress("NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER")
 @NoRepositoryBean
 class SimpleCustomRepository<T : Any, ID>(
-    private val clazz: KClass<T>,
+    clazz: KClass<T>,
     private val entityManager: EntityManager
 ) : CustomRepository<T, ID> {
 
