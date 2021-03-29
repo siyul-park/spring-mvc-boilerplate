@@ -3,7 +3,6 @@ package io.github.siyual_park.repository
 import io.github.siyual_park.exception.ConflictException
 import io.github.siyual_park.exception.NotFoundException
 import io.github.siyual_park.repository.patch.Patch
-import org.hibernate.exception.ConstraintViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -13,6 +12,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import javax.persistence.EntityManager
 import javax.persistence.LockModeType
+import javax.persistence.PersistenceException
 import kotlin.reflect.KClass
 
 @NoRepositoryBean
@@ -111,7 +111,7 @@ class SimpleCustomRepository<T : Any, ID>(
             return function()
         } catch (e: EmptyResultDataAccessException) {
             throw NotFoundException(e.message)
-        } catch (e: ConstraintViolationException) {
+        } catch (e: PersistenceException) {
             throw ConflictException(e.message)
         }
     }
