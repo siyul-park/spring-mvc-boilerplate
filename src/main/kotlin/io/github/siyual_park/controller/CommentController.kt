@@ -1,10 +1,10 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.Paginator
-import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.model.comment.Comment
 import io.github.siyual_park.model.comment.CommentCreatePayload
 import io.github.siyual_park.model.comment.CommentCreatePayloadMapper
+import io.github.siyual_park.model.comment.CommentUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CommentRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
@@ -41,7 +41,7 @@ class CommentController(
     @ResponseStatus(HttpStatus.OK)
     fun update(
         @PathVariable("comment-id") id: String,
-        @RequestBody payload: ArticleUpdatePayload
+        @RequestBody payload: CommentUpdatePayload
     ): Comment {
         return commentRepository.updateByIdOrFail(id, jsonMergePatchFactory.create(payload))
     }
