@@ -1,6 +1,7 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.Paginator
+import io.github.siyual_park.exception.BadRequestException
 import io.github.siyual_park.model.article.Article
 import io.github.siyual_park.model.article.ArticleCreatePayload
 import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
@@ -51,20 +52,20 @@ class ArticleController(
         @RequestBody payload: ArticleUpdatePayload
     ): Article {
         val jsonMergePatch: Patch<Article> = jsonMergePatchFactory.create(payload)
-
-        return articleRepository.updateByIdOrFail(
-            id,
-            LambdaPatch.from {
-                payload.categoryId?.let { optional ->
-                    optional.ifPresent {
-                        category = categoryRepository.findByIdOrFail(it)
-                    }
-                    payload.categoryId = null
+        val patch: Patch<Article> = LambdaPatch.from {
+            payload.categoryId?.let {
+                if (it.isPresent) {
+                    category = categoryRepository.findByIdOrFail(it.get())
+                } else {
+                    throw BadRequestException()
                 }
-
-                jsonMergePatch.apply(this)
+                payload.categoryId = null
             }
-        )
+
+            jsonMergePatch.apply(this)
+        }
+
+        return articleRepository.updateByIdOrFail(id, patch)
     }
 
     @GetMapping("")
