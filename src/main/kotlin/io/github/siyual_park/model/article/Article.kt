@@ -9,4 +9,6 @@ import javax.persistence.Table
 data class Article(
     var title: String,
     var content: String,
-) : BaseEntity()
+) : BaseEntity() {
+    var views: Long = 0
+}
