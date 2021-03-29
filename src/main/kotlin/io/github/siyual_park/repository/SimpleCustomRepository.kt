@@ -2,6 +2,7 @@ package io.github.siyual_park.repository
 
 import io.github.siyual_park.exception.ConflictException
 import io.github.siyual_park.exception.NotFoundException
+import io.github.siyual_park.expansion.toNullable
 import io.github.siyual_park.repository.patch.Patch
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.Page
@@ -81,12 +82,7 @@ class SimpleCustomRepository<T : Any, ID, SPECIFICATION_FACTORY>(
     override fun find(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>, lockMode: LockModeType?): T? = find(specProvider(specification))
 
     override fun find(spec: Specification<T>, lockMode: LockModeType?): T? = warpException { simpleJpaRepository.findOne(spec) }
-        .let {
-            when (it.isPresent) {
-                true -> it.get()
-                false -> null
-            }
-        }
+        .toNullable()
         ?.also {
             if (lockMode != null) {
                 entityManager.lock(it, lockMode)
