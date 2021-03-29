@@ -4,6 +4,7 @@ import io.github.siyual_park.repository.patch.Patch
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.Repository
 import org.springframework.transaction.annotation.Transactional
+import javax.persistence.LockModeType
 
 @NoRepositoryBean
 interface CustomRepository<T : Any, ID> : Repository<T, ID> {
@@ -51,4 +52,7 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
 
     @Transactional
     fun updateById(id: ID, patch: Patch<T>): T?
+
+    @Transactional
+    fun <R> lock(entity: T, lockMode: LockModeType, function: (T) -> R): R
 }
