@@ -8,8 +8,10 @@ import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.github.siyual_park.repository.patch.LambdaPatch
 import io.swagger.annotations.Api
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.jdbc.support.JdbcUtils
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -49,10 +51,21 @@ class ArticleController(
 
     @GetMapping("")
     fun findAll(
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("per_page", required = false) perPage: Int?
+        @RequestParam("page", required = false) offset: Int?,
+        @RequestParam("per_page", required = false) limit: Int?,
+        @RequestParam("sort", required = false) property: String?,
+        @RequestParam("order", required = false) direction: Sort.Direction?
     ): ResponseEntity<Stream<Article>> {
-        return paginator.query(page, perPage)
+        val sort = Sort.by(
+            direction ?: Sort.Direction.ASC,
+            JdbcUtils.convertUnderscoreNameToPropertyName(property ?: "id")
+        )
+
+        return paginator.query(
+            offset = offset,
+            limit = limit,
+            sort = sort
+        )
     }
 
     @GetMapping("/{article-id}")

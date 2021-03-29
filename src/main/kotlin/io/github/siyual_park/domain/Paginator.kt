@@ -11,11 +11,11 @@ class Paginator<T : Any, ID>(
     private val repository: CustomRepository<T, ID>
 ) {
     fun query(
-        page: Int?,
-        perPage: Int?,
+        offset: Int?,
+        limit: Int?,
         sort: Sort = Sort.unsorted()
     ): ResponseEntity<Stream<T>> {
-        val pageRequest = PageRequest.of(page ?: 0, perPage ?: 20, sort)
+        val pageRequest = PageRequest.of(offset ?: 0, limit ?: 20, sort)
         val pageResponse = repository.findAll(pageRequest)
 
         val headers = HttpHeaders()
