@@ -5,6 +5,7 @@ import io.github.siyual_park.model.article.Article
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.specification.ArticleSpecification
+import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.jdbc.support.JdbcUtils
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.stream.Stream
 
+@Api
 @RestController
 @RequestMapping("/categories")
 class CategorizeArticleController(
