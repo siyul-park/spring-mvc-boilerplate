@@ -30,18 +30,18 @@ class ArticleController(
         return articleRepository.save(payload.toArticle())
     }
 
-    @PatchMapping("/{article_id}")
+    @PatchMapping("/{article-id}")
     @ResponseStatus(HttpStatus.OK)
     fun update(
-        @PathVariable("article_id") id: String,
+        @PathVariable("article-id") id: String,
         @RequestBody payload: ArticleUpdatePayload
     ): Article {
         return articleRepository.updateByIdOrFail(id, jsonMergePatchFactory.create(payload))
     }
 
-    @GetMapping("/{article_id}")
+    @GetMapping("/{article-id}")
     @ResponseStatus(HttpStatus.OK)
-    fun find(@PathVariable("article_id") id: String): Article {
+    fun find(@PathVariable("article-id") id: String): Article {
         return articleRepository.findByIdOrFail(id)
     }
 }
