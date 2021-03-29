@@ -40,7 +40,7 @@ class CategorizeArticleController(
             offset = offset,
             limit = limit,
             sort = createSort(property, direction),
-            spec = ArticleSpecification.withCategory(category.id!!)
+            spec = ArticleSpecification.withCategory(category)
         )
     }
 
@@ -58,7 +58,7 @@ class CategorizeArticleController(
             offset = offset,
             limit = limit,
             sort = createSort(property, direction),
-            spec = ArticleSpecification.withCategory(category.id!!)
+            spec = ArticleSpecification.withCategory(category)
         )
     }
 

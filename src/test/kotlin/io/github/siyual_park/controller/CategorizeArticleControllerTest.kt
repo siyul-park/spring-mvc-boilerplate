@@ -6,7 +6,6 @@ import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.category.Category
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
-import io.github.siyual_park.repository.specification.ArticleSpecification
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +35,7 @@ class CategorizeArticleControllerTest @Autowired constructor(
     fun testAllById() {
         articleCreatePayloadMockFactory.create()
             .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
-        val count = articleRepository.count(ArticleSpecification.withCategory(category.id!!))
+        val count = articleRepository.count { withCategory(category) }
 
         mockMvc.get("/categories/${category.id}/articles")
             .andExpect {
@@ -53,7 +52,7 @@ class CategorizeArticleControllerTest @Autowired constructor(
     fun testAllByName() {
         articleCreatePayloadMockFactory.create()
             .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
-        val count = articleRepository.count(ArticleSpecification.withCategory(category.id!!))
+        val count = articleRepository.count { withCategory(category) }
 
         mockMvc.get("/categories/@${category.name}/articles")
             .andExpect {
