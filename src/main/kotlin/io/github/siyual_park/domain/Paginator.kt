@@ -1,5 +1,6 @@
 package io.github.siyual_park.domain
 
+import io.github.siyual_park.exception.BadRequestException
 import io.github.siyual_park.repository.CustomRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -15,7 +16,14 @@ class Paginator<T : Any, ID>(
         limit: Int?,
         sort: Sort = Sort.unsorted()
     ): ResponseEntity<Stream<T>> {
-        val pageRequest = PageRequest.of(offset ?: 0, limit ?: 20, sort)
+        val finalOffset = offset ?: 0
+        val finalLimit = limit ?: 20
+
+        if (finalOffset < 0 || finalLimit <= 0) {
+            throw BadRequestException()
+        }
+
+        val pageRequest = PageRequest.of(finalOffset, finalLimit, sort)
         val pageResponse = repository.findAll(pageRequest)
 
         val headers = HttpHeaders()
