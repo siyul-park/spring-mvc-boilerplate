@@ -3,6 +3,7 @@ package io.github.siyual_park.confg
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import io.github.siyual_park.converter.jackson.InstantEpochTimeModule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 
@@ -13,6 +14,8 @@ class JacksonConfiguration {
     fun configObjectMapper(objectMapper: ObjectMapper) {
         objectMapper.apply {
             registerModule(Jdk8Module())
+            registerModule(InstantEpochTimeModule())
+
             propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
         }
     }
