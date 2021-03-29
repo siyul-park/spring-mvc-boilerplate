@@ -3,7 +3,7 @@ package io.github.siyual_park.model
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.time.LocalDateTime
+import java.time.Instant
 import javax.persistence.Column
 import javax.persistence.EntityListeners
 import javax.persistence.GeneratedValue
@@ -20,8 +20,8 @@ open class BaseEntity {
 
     @field:CreatedDate
     @field:Column(updatable = false)
-    var createdAt: LocalDateTime? = null
+    var createdAt: Instant? = null
 
     @field:LastModifiedDate
-    var updatedAt: LocalDateTime? = null
+    var updatedAt: Instant? = null
 }

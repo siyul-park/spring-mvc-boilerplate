@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
+import java.time.Instant
 import java.util.Optional
 
 @ControllerTest
@@ -60,8 +61,8 @@ class ArticleControllerTest @Autowired constructor(
         assertEquals(article.id, created.id)
         assertEquals(article.title, titleUpdatePayload.title?.get())
         assertEquals(article.content, created.content)
-        assertEquals(article.createdAt, created.createdAt)
-        assertNotNull(article.updatedAt)
+        assertEquals(article.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
+        assertEquals(article.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
     }
 
     @Test
@@ -78,7 +79,7 @@ class ArticleControllerTest @Autowired constructor(
         assertEquals(article.id, created.id)
         assertEquals(article.title, created.title)
         assertEquals(article.content, created.content)
-        assertEquals(article.createdAt, created.createdAt)
-        assertEquals(article.updatedAt, created.updatedAt)
+        assertEquals(article.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
+        assertEquals(article.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
     }
 }

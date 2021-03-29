@@ -1,5 +1,6 @@
 val kotlin_version: String by project
 val jcabi_manifests_version: String by project
+val springfox_version: String by project
 
 buildscript {
     val klint_version: String by project
@@ -45,6 +46,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     implementation("com.jcabi:jcabi-manifests:$jcabi_manifests_version")
+
+    implementation("io.springfox:springfox-boot-starter:$springfox_version")
+    implementation("io.springfox:springfox-swagger-ui:$springfox_version")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.h2database:h2")
