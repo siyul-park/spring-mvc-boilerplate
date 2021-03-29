@@ -47,6 +47,9 @@ interface CustomRepository<T : Any, ID> {
     fun existsById(id: ID): Boolean
 
     @Transactional
+    fun findAll(spec: Specification<T>, pageable: Pageable): Page<T>
+
+    @Transactional
     fun findAll(pageable: Pageable): Page<T>
 
     @Transactional

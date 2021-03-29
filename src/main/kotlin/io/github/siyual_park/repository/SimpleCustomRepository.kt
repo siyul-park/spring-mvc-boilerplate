@@ -90,6 +90,8 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id!!) }
 
+    override fun findAll(spec: Specification<T>, pageable: Pageable): Page<T> = warpException { simpleJpaRepository.findAll(spec, pageable) }
+
     override fun findAll(pageable: Pageable): Page<T> = warpException { simpleJpaRepository.findAll(pageable) }
 
     override fun findAll(): Iterable<T> = warpException { simpleJpaRepository.findAll() }
