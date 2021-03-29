@@ -88,6 +88,23 @@ class ArticleControllerTest @Autowired constructor(
     }
 
     @Test
+    fun testFindAllArticle() {
+        ArticleCreatePayloadMockFactory.create()
+            .let { articleRepository.create(it.toArticle()) }
+        val count = articleRepository.count()
+
+        mockMvc.get("/articles")
+            .andExpect {
+                status { isOk() }
+                header {
+                    string("Total-Count", count.toString())
+                    string("Total-Page", (count / 20 + 1).toString())
+                }
+            }
+            .andReturn()
+    }
+
+    @Test
     fun testDeleteArticle() {
         val created = ArticleCreatePayloadMockFactory.create()
             .let { articleRepository.create(it.toArticle()) }
