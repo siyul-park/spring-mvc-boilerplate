@@ -3,8 +3,10 @@ package io.github.siyual_park.controller
 import io.github.siyual_park.domain.Paginator
 import io.github.siyual_park.model.article.Article
 import io.github.siyual_park.model.article.ArticleCreatePayload
+import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
+import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.github.siyual_park.repository.patch.LambdaPatch
 import io.swagger.annotations.Api
@@ -29,15 +31,16 @@ import java.util.stream.Stream
 @RequestMapping("/articles")
 class ArticleController(
     private val articleRepository: ArticleRepository,
+    categoryRepository: CategoryRepository,
     private val jsonMergePatchFactory: JsonMergePatchFactory
 ) {
-
+    private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
     private val paginator = Paginator(articleRepository)
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody payload: ArticleCreatePayload): Article {
-        return articleRepository.create(payload.toArticle())
+        return articleRepository.create(articleCreatePayloadMapper.map(payload))
     }
 
     @PatchMapping("/{article-id}")
