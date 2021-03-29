@@ -52,8 +52,7 @@ class ArticleControllerTest @Autowired constructor(
             .let { articleRepository.create(it.toArticle()) }
 
         val titleUpdatePayload = ArticleUpdatePayload(
-            Optional.of(RandomFactory.createString(10)),
-            null
+            title = Optional.of(RandomFactory.createString(10))
         )
         val result = mockMvc.patch("/articles/${created.id}") { json(objectMapper.writeValueAsString(titleUpdatePayload)) }
             .andExpect { status { isOk() } }
