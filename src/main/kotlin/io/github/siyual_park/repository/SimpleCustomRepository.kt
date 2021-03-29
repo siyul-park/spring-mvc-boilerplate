@@ -11,7 +11,6 @@ import javax.persistence.EntityManager
 import javax.persistence.LockModeType
 import kotlin.reflect.KClass
 
-@Suppress("NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER")
 @NoRepositoryBean
 class SimpleCustomRepository<T : Any, ID>(
     private val clazz: KClass<T>,
@@ -63,7 +62,7 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun findById(id: ID, lockMode: LockModeType?): T? = warpException { entityManager.find(clazz.java, id, lockMode) }
 
-    override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id) }
+    override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id!!) }
 
     override fun findAll(): Iterable<T> = warpException { simpleJpaRepository.findAll() }
 
