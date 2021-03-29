@@ -1,16 +1,14 @@
 package io.github.siyual_park.controller
 
+import io.github.siyual_park.domain.ArticlePatchFactory
 import io.github.siyual_park.domain.Paginator
-import io.github.siyual_park.exception.BadRequestException
 import io.github.siyual_park.model.article.Article
 import io.github.siyual_park.model.article.ArticleCreatePayload
 import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
-import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.github.siyual_park.repository.patch.LambdaPatch
-import io.github.siyual_park.repository.patch.Patch
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
@@ -32,8 +30,8 @@ import java.util.stream.Stream
 @RequestMapping("/articles")
 class ArticleController(
     private val articleRepository: ArticleRepository,
-    private val categoryRepository: CategoryRepository,
-    private val jsonMergePatchFactory: JsonMergePatchFactory
+    categoryRepository: CategoryRepository,
+    private val articlePatchFactory: ArticlePatchFactory
 ) {
     private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
     private val paginator = Paginator(articleRepository)
@@ -50,21 +48,7 @@ class ArticleController(
         @PathVariable("article-id") id: String,
         @RequestBody payload: ArticleUpdatePayload
     ): Article {
-        val jsonMergePatch: Patch<Article> = jsonMergePatchFactory.create(payload)
-        val patch: Patch<Article> = LambdaPatch.from {
-            payload.categoryId?.let {
-                if (it.isPresent) {
-                    category = categoryRepository.findByIdOrFail(it.get())
-                } else {
-                    throw BadRequestException()
-                }
-                payload.categoryId = null
-            }
-
-            jsonMergePatch.apply(this)
-        }
-
-        return articleRepository.updateByIdOrFail(id, patch)
+        return articleRepository.updateByIdOrFail(id, articlePatchFactory.create(payload))
     }
 
     @GetMapping("")
