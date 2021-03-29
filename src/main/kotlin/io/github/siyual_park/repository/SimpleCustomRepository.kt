@@ -47,9 +47,17 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun updateByIdOrFail(id: ID, patch: Patch<T>): T = updateById(id, patch) ?: throw NotFoundException()
 
-    override fun updateById(id: ID, patch: Patch<T>): T? = warpException { entityManager.find(clazz.java, id, LockModeType.PESSIMISTIC_WRITE) }
-        ?.let { patch.apply(it) }
-        ?.let { save(it) }
+    override fun updateById(id: ID, patch: Patch<T>): T? = findById(id)
+        ?.let { entity ->
+            lock(entity, LockModeType.PESSIMISTIC_WRITE) {
+                save(patch.apply(it))
+            }
+        }
+
+    override fun <R> lock(entity: T, lockMode: LockModeType, function: (T) -> R): R {
+        entityManager.lock(entity, lockMode)
+        return function(entity)
+    }
 
     private inline fun <R> warpException(function: () -> R): R {
         try {
