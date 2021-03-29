@@ -37,10 +37,10 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
     fun findById(id: ID, lockMode: LockModeType? = null): T?
 
     @Transactional
-    fun findByOrFail(spec: Specification<T>, lockMode: LockModeType? = null): T
+    fun findOrFail(spec: Specification<T>, lockMode: LockModeType? = null): T
 
     @Transactional
-    fun findBy(spec: Specification<T>, lockMode: LockModeType? = null): T?
+    fun find(spec: Specification<T>, lockMode: LockModeType? = null): T?
 
     @Transactional
     fun existsById(id: ID): Boolean
@@ -50,6 +50,9 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
 
     @Transactional
     fun findAllById(ids: Iterable<ID>): Iterable<T>
+
+    @Transactional
+    fun findAll(spec: Specification<T>): Iterable<T>
 
     @Transactional
     fun count(): Long

@@ -63,9 +63,10 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun findById(id: ID, lockMode: LockModeType?): T? = warpException { entityManager.find(clazz.java, id, lockMode) }
 
-    override fun findByOrFail(spec: Specification<T>, lockMode: LockModeType?): T = findBy(spec, lockMode) ?: throw NotFoundException()
+    override fun findOrFail(spec: Specification<T>, lockMode: LockModeType?): T = find(spec, lockMode)
+        ?: throw NotFoundException()
 
-    override fun findBy(spec: Specification<T>, lockMode: LockModeType?): T? = warpException { simpleJpaRepository.findOne(spec) }
+    override fun find(spec: Specification<T>, lockMode: LockModeType?): T? = warpException { simpleJpaRepository.findOne(spec) }
         .let {
             when (it.isPresent) {
                 true -> it.get()
@@ -79,6 +80,8 @@ class SimpleCustomRepository<T : Any, ID>(
     override fun findAll(): Iterable<T> = warpException { simpleJpaRepository.findAll() }
 
     override fun findAllById(ids: Iterable<ID>): Iterable<T> = warpException { simpleJpaRepository.findAllById(ids) }
+
+    override fun findAll(spec: Specification<T>): Iterable<T> = warpException { simpleJpaRepository.findAll(spec) }
 
     override fun count(): Long = warpException { simpleJpaRepository.count() }
 
