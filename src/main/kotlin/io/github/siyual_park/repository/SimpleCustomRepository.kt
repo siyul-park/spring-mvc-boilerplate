@@ -1,5 +1,6 @@
 package io.github.siyual_park.repository
 
+import io.github.siyual_park.exception.ConflictException
 import io.github.siyual_park.exception.NotFoundException
 import io.github.siyual_park.repository.patch.Patch
 import org.springframework.dao.EmptyResultDataAccessException
@@ -17,12 +18,46 @@ class SimpleCustomRepository<T : Any, ID>(
     private val entityManager: EntityManager
 ) : CustomRepository<T, ID> {
 
-    private val simpleJpaRepository = SimpleJpaRepository<T, ID>(clazz.java, entityManager)
     private val entityInformation = JpaEntityInformationSupport.getEntityInformation(clazz.java, entityManager)
 
-    override fun <S : T> save(entity: S): S = warpException { simpleJpaRepository.save(entity) }
+    // TODO(제거 하기)
+    private val simpleJpaRepository = SimpleJpaRepository<T, ID>(clazz.java, entityManager)
 
-    override fun <S : T> saveAll(entities: Iterable<S>): Iterable<S> = warpException { simpleJpaRepository.saveAll(entities) }
+    override fun <S : T> create(entity: S): S = if (entityInformation.isNew(entity)) {
+        entityManager.persist(entity)
+        entity
+    } else {
+        throw ConflictException()
+    }
+
+    override fun <S : T> createAll(entities: Iterable<S>): Iterable<S> = mutableListOf<S>().apply {
+        for (entity in entities) {
+            add(create(entity))
+        }
+    }
+
+    override fun updateByIdOrFail(id: ID, patch: Patch<T>): T = updateById(id, patch) ?: throw NotFoundException()
+
+    override fun updateById(id: ID, patch: Patch<T>): T? = findById(id, LockModeType.PESSIMISTIC_WRITE)?.let { update(it, patch) }
+
+    override fun update(entity: T, patch: Patch<T>): T = if (!entityInformation.isNew(entity)) {
+        entityManager.merge(entity)
+    } else {
+        throw NotFoundException()
+    }
+
+    override fun <S : T> upsert(entity: S): S = if (entityInformation.isNew(entity)) {
+        entityManager.persist(entity)
+        entity
+    } else {
+        entityManager.merge(entity)
+    }
+
+    override fun <S : T> upsertAll(entities: Iterable<S>): Iterable<S> = mutableListOf<S>().apply {
+        for (entity in entities) {
+            add(upsert(entity))
+        }
+    }
 
     override fun findByIdOrFail(id: ID, lockMode: LockModeType?): T = findById(id, lockMode) ?: throw NotFoundException()
 
@@ -45,24 +80,6 @@ class SimpleCustomRepository<T : Any, ID>(
     override fun deleteAll(entities: Iterable<T>): Unit = warpException { simpleJpaRepository.deleteAll(entities) }
 
     override fun deleteAll(): Unit = warpException { simpleJpaRepository.deleteAll() }
-
-    override fun updateByIdOrFail(id: ID, patch: Patch<T>): T = updateById(id, patch) ?: throw NotFoundException()
-
-    override fun updateById(id: ID, patch: Patch<T>): T? = findById(id, LockModeType.PESSIMISTIC_WRITE)?.let { update(it, patch) }
-
-    override fun update(entity: T, patch: Patch<T>): T {
-        if (entityInformation.isNew(entity)) {
-            throw NotFoundException()
-        }
-        return save(patch.apply(entity))
-    }
-
-    override fun lock(entity: T, lockMode: LockModeType): T = try {
-        entityManager.lock(entity, lockMode)
-        entity
-    } catch (e: IllegalArgumentException) {
-        throw NotFoundException(e.message)
-    }
 
     private inline fun <R> warpException(function: () -> R): R {
         try {

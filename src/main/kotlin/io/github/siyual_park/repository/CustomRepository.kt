@@ -9,10 +9,25 @@ import javax.persistence.LockModeType
 @NoRepositoryBean
 interface CustomRepository<T : Any, ID> : Repository<T, ID> {
     @Transactional
-    fun <S : T> save(entity: S): S
+    fun <S : T> create(entity: S): S
 
     @Transactional
-    fun <S : T> saveAll(entities: Iterable<S>): Iterable<S>
+    fun <S : T> createAll(entities: Iterable<S>): Iterable<S>
+
+    @Transactional
+    fun updateByIdOrFail(id: ID, patch: Patch<T>): T
+
+    @Transactional
+    fun updateById(id: ID, patch: Patch<T>): T?
+
+    @Transactional
+    fun update(entity: T, patch: Patch<T>): T
+
+    @Transactional
+    fun <S : T> upsert(entity: S): S
+
+    @Transactional
+    fun <S : T> upsertAll(entities: Iterable<S>): Iterable<S>
 
     @Transactional
     fun findByIdOrFail(id: ID, lockMode: LockModeType? = null): T
@@ -46,18 +61,4 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
 
     @Transactional
     fun deleteAll()
-
-    @Transactional
-    fun updateByIdOrFail(id: ID, patch: Patch<T>): T
-
-    @Transactional
-    fun updateById(id: ID, patch: Patch<T>): T?
-
-    @Transactional
-    fun update(entity: T, patch: Patch<T>): T
-
-    @Transactional
-    fun lock(entity: T, lockMode: LockModeType): T
 }
-
-inline fun <T : Any, ID, R> CustomRepository<T, ID>.lock(entity: T, lockMode: LockModeType, function: (T) -> R): R = function(lock(entity, lockMode))
