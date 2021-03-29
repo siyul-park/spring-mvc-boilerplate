@@ -46,7 +46,7 @@ class ArticleControllerTest @Autowired constructor(
     }
 
     @Test
-    fun testCreateArticle() {
+    fun testCreate() {
         val payload = articleCreatePayloadMockFactory.create()
 
         val result = mockMvc.post("/articles") { json(objectMapper.writeValueAsString(payload)) }
@@ -64,7 +64,7 @@ class ArticleControllerTest @Autowired constructor(
     }
 
     @Test
-    fun testUpdateArticle() {
+    fun testUpdate() {
         val created = articleCreatePayloadMockFactory.create()
             .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
 
@@ -86,7 +86,7 @@ class ArticleControllerTest @Autowired constructor(
     }
 
     @Test
-    fun testFindArticle() {
+    fun testFind() {
         val created = articleCreatePayloadMockFactory.create()
             .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
 
@@ -105,7 +105,7 @@ class ArticleControllerTest @Autowired constructor(
     }
 
     @Test
-    fun testFindAllArticle() {
+    fun testFindAll() {
         articleCreatePayloadMockFactory.create()
             .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
         val count = articleRepository.count()
@@ -122,7 +122,7 @@ class ArticleControllerTest @Autowired constructor(
     }
 
     @Test
-    fun testDeleteArticle() {
+    fun testDelete() {
         val created = articleCreatePayloadMockFactory.create()
             .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
 
