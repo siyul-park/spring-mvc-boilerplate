@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 import javax.persistence.LockModeType
 
 @NoRepositoryBean
-interface CustomRepository<T : Any, ID> {
+interface CustomRepository<T : Any, ID, SPECIFICATION_FACTORY> {
     @Transactional
     fun <S : T> create(entity: S): S
 
@@ -38,13 +38,25 @@ interface CustomRepository<T : Any, ID> {
     fun findById(id: ID, lockMode: LockModeType? = null): T?
 
     @Transactional
+    fun findOrFail(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>, lockMode: LockModeType? = null): T
+
+    @Transactional
     fun findOrFail(spec: Specification<T>, lockMode: LockModeType? = null): T
+
+    @Transactional
+    fun find(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>, lockMode: LockModeType? = null): T?
 
     @Transactional
     fun find(spec: Specification<T>, lockMode: LockModeType? = null): T?
 
     @Transactional
     fun existsById(id: ID): Boolean
+
+    @Transactional
+    fun findAll(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>, pageable: Pageable): Page<T>
+
+    @Transactional
+    fun findAll(spec: Specification<T>, pageable: Pageable): Page<T>
 
     @Transactional
     fun findAll(pageable: Pageable): Page<T>
@@ -56,10 +68,19 @@ interface CustomRepository<T : Any, ID> {
     fun findAllById(ids: Iterable<ID>): Iterable<T>
 
     @Transactional
+    fun findAll(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>): Iterable<T>
+
+    @Transactional
     fun findAll(spec: Specification<T>): Iterable<T>
 
     @Transactional
     fun count(): Long
+
+    @Transactional
+    fun count(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>): Long
+
+    @Transactional
+    fun count(spec: Specification<T>): Long
 
     @Transactional
     fun deleteByIdOrFail(id: ID)

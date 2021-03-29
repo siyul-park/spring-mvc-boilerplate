@@ -2,6 +2,7 @@ package io.github.siyual_park.repository
 
 import io.github.siyual_park.exception.ConflictException
 import io.github.siyual_park.exception.NotFoundException
+import io.github.siyual_park.expansion.toNullable
 import io.github.siyual_park.repository.patch.Patch
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.Page
@@ -16,10 +17,11 @@ import javax.persistence.PersistenceException
 import kotlin.reflect.KClass
 
 @NoRepositoryBean
-class SimpleCustomRepository<T : Any, ID>(
+class SimpleCustomRepository<T : Any, ID, SPECIFICATION_FACTORY>(
     private val clazz: KClass<T>,
-    private val entityManager: EntityManager
-) : CustomRepository<T, ID> {
+    private val entityManager: EntityManager,
+    private val specification: SPECIFICATION_FACTORY
+) : CustomRepository<T, ID, SPECIFICATION_FACTORY> {
 
     private val entityInformation = JpaEntityInformationSupport.getEntityInformation(clazz.java, entityManager)
 
@@ -72,16 +74,15 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun findById(id: ID, lockMode: LockModeType?): T? = warpException { entityManager.find(clazz.java, id, lockMode) }
 
+    override fun findOrFail(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>, lockMode: LockModeType?): T = findOrFail(specProvider(specification))
+
     override fun findOrFail(spec: Specification<T>, lockMode: LockModeType?): T = find(spec, lockMode)
         ?: throw NotFoundException()
 
+    override fun find(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>, lockMode: LockModeType?): T? = find(specProvider(specification))
+
     override fun find(spec: Specification<T>, lockMode: LockModeType?): T? = warpException { simpleJpaRepository.findOne(spec) }
-        .let {
-            when (it.isPresent) {
-                true -> it.get()
-                false -> null
-            }
-        }
+        .toNullable()
         ?.also {
             if (lockMode != null) {
                 entityManager.lock(it, lockMode)
@@ -90,13 +91,23 @@ class SimpleCustomRepository<T : Any, ID>(
 
     override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id!!) }
 
+    override fun findAll(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>, pageable: Pageable): Page<T> = findAll(specProvider(specification), pageable)
+
+    override fun findAll(spec: Specification<T>, pageable: Pageable): Page<T> = warpException { simpleJpaRepository.findAll(spec, pageable) }
+
     override fun findAll(pageable: Pageable): Page<T> = warpException { simpleJpaRepository.findAll(pageable) }
 
     override fun findAll(): Iterable<T> = warpException { simpleJpaRepository.findAll() }
 
     override fun findAllById(ids: Iterable<ID>): Iterable<T> = warpException { simpleJpaRepository.findAllById(ids) }
 
+    override fun findAll(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>): Iterable<T> = findAll(specProvider(specification))
+
     override fun findAll(spec: Specification<T>): Iterable<T> = warpException { simpleJpaRepository.findAll(spec) }
+
+    override fun count(specProvider: SPECIFICATION_FACTORY.() -> Specification<T>): Long = count(specProvider(specification))
+
+    override fun count(spec: Specification<T>): Long = warpException { simpleJpaRepository.count(spec) }
 
     override fun count(): Long = warpException { simpleJpaRepository.count() }
 
@@ -121,9 +132,16 @@ class SimpleCustomRepository<T : Any, ID>(
     }
 
     companion object {
-        inline fun <reified T : Any, ID> from(entityManager: EntityManager) = SimpleCustomRepository<T, ID>(
+        inline fun <reified T : Any, ID> from(entityManager: EntityManager) = SimpleCustomRepository<T, ID, Unit>(
             T::class,
-            entityManager
+            entityManager,
+            Unit
+        )
+
+        inline fun <reified T : Any, ID, SPECIFICATION_FACTORY> of(entityManager: EntityManager, specification: SPECIFICATION_FACTORY) = SimpleCustomRepository<T, ID, SPECIFICATION_FACTORY>(
+            T::class,
+            entityManager,
+            specification
         )
     }
 }
