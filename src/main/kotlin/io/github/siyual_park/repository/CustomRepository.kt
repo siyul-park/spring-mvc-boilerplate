@@ -1,6 +1,7 @@
 package io.github.siyual_park.repository
 
 import io.github.siyual_park.repository.patch.Patch
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.Repository
 import org.springframework.transaction.annotation.Transactional
@@ -34,6 +35,12 @@ interface CustomRepository<T : Any, ID> : Repository<T, ID> {
 
     @Transactional
     fun findById(id: ID, lockMode: LockModeType? = null): T?
+
+    @Transactional
+    fun findByOrFail(spec: Specification<T>, lockMode: LockModeType? = null): T
+
+    @Transactional
+    fun findBy(spec: Specification<T>, lockMode: LockModeType? = null): T?
 
     @Transactional
     fun existsById(id: ID): Boolean

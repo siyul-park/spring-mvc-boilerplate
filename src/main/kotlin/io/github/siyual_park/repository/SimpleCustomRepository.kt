@@ -4,6 +4,7 @@ import io.github.siyual_park.exception.ConflictException
 import io.github.siyual_park.exception.NotFoundException
 import io.github.siyual_park.repository.patch.Patch
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 import org.springframework.data.repository.NoRepositoryBean
@@ -61,6 +62,17 @@ class SimpleCustomRepository<T : Any, ID>(
     override fun findByIdOrFail(id: ID, lockMode: LockModeType?): T = findById(id, lockMode) ?: throw NotFoundException()
 
     override fun findById(id: ID, lockMode: LockModeType?): T? = warpException { entityManager.find(clazz.java, id, lockMode) }
+
+    override fun findByOrFail(spec: Specification<T>, lockMode: LockModeType?): T = findBy(spec, lockMode) ?: throw NotFoundException()
+
+    override fun findBy(spec: Specification<T>, lockMode: LockModeType?): T? = warpException { simpleJpaRepository.findOne(spec) }
+        .let {
+            when (it.isPresent) {
+                true -> it.get()
+                false -> null
+            }
+        }
+        ?.also { entityManager.lock(it, lockMode) }
 
     override fun existsById(id: ID): Boolean = warpException { simpleJpaRepository.existsById(id!!) }
 
