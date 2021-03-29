@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 import java.time.Instant
 import java.util.Optional
+import kotlin.math.ceil
 
 @ControllerTest
 class ArticleControllerTest @Autowired constructor(
@@ -85,6 +86,23 @@ class ArticleControllerTest @Autowired constructor(
         assertEquals(article.contentType, created.contentType)
         assertEquals(article.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
         assertEquals(article.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
+    }
+
+    @Test
+    fun testFindAllArticle() {
+        ArticleCreatePayloadMockFactory.create()
+            .let { articleRepository.create(it.toArticle()) }
+        val count = articleRepository.count()
+
+        mockMvc.get("/articles")
+            .andExpect {
+                status { isOk() }
+                header {
+                    string("Total-Count", count.toString())
+                    string("Total-Page", ceil(count / 20.0).toInt().toString())
+                }
+            }
+            .andReturn()
     }
 
     @Test
