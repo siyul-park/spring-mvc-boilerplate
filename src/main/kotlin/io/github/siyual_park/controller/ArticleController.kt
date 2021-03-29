@@ -5,6 +5,7 @@ import io.github.siyual_park.model.article.ArticleCreatePayload
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
+import io.github.siyual_park.repository.patch.LambdaPatch
 import io.swagger.annotations.Api
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -43,7 +44,7 @@ class ArticleController(
     @GetMapping("/{article-id}")
     @ResponseStatus(HttpStatus.OK)
     fun find(@PathVariable("article-id") id: String): Article {
-        return articleRepository.findByIdOrFail(id)
+        return articleRepository.updateByIdOrFail(id, LambdaPatch.from { views += 1 })
     }
 
     @DeleteMapping("/{article-id}")

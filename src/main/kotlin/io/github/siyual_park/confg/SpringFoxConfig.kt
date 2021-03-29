@@ -3,6 +3,7 @@ package io.github.siyual_park.confg
 import io.swagger.annotations.Api
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.util.MimeType
 import springfox.documentation.builders.PathSelectors
 import springfox.documentation.builders.RequestHandlerSelectors
 import springfox.documentation.spi.DocumentationType
@@ -15,6 +16,7 @@ class SpringFoxConfig {
     fun api(): Docket {
         return Docket(DocumentationType.SWAGGER_2).apply {
             directModelSubstitute(Instant::class.java, Long::class.java)
+            directModelSubstitute(MimeType::class.java, String::class.java)
         }
             .select()
             .apis(RequestHandlerSelectors.withClassAnnotation(Api::class.java))
