@@ -41,7 +41,7 @@ class SimpleCustomRepository<T : Any, ID>(
     override fun updateById(id: ID, patch: Patch<T>): T? = findById(id, LockModeType.PESSIMISTIC_WRITE)?.let { update(it, patch) }
 
     override fun update(entity: T, patch: Patch<T>): T = if (!entityInformation.isNew(entity)) {
-        entityManager.merge(entity)
+        entityManager.merge(patch.apply(entity))
     } else {
         throw NotFoundException()
     }
