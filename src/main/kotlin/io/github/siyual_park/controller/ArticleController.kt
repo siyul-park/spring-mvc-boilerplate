@@ -28,7 +28,7 @@ class ArticleController(
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody payload: ArticleCreatePayload): Article {
-        return articleRepository.save(payload.toArticle())
+        return articleRepository.create(payload.toArticle())
     }
 
     @PatchMapping("/{article-id}")
