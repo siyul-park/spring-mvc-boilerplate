@@ -4,13 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.siyual_park.expansion.json
 import io.github.siyual_park.expansion.readValue
 import io.github.siyual_park.factory.ArticleCreatePayloadMockFactory
+import io.github.siyual_park.factory.CommentCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
 import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.article.ArticleResponsePayload
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.model.category.Category
+import io.github.siyual_park.model.comment.CommentCreatePayloadMapper
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
+import io.github.siyual_park.repository.CommentRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -32,7 +35,9 @@ class ArticleControllerTest @Autowired constructor(
     private val objectMapper: ObjectMapper,
     private val articleRepository: ArticleRepository,
     private val categoryRepository: CategoryRepository,
-    private val articleCreatePayloadMapper: ArticleCreatePayloadMapper
+    private val commentRepository: CommentRepository,
+    private val articleCreatePayloadMapper: ArticleCreatePayloadMapper,
+    private val commentCreatePayloadMapper: CommentCreatePayloadMapper
 ) {
 
     private lateinit var category: Category
@@ -125,10 +130,15 @@ class ArticleControllerTest @Autowired constructor(
         val created = articleCreatePayloadMockFactory.create()
             .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
 
+        val commentCreatePayloadMockFactory = CommentCreatePayloadMockFactory(created)
+        val comment = commentCreatePayloadMockFactory.create()
+            .let { commentRepository.create(commentCreatePayloadMapper.map(it)) }
+
         mockMvc.delete("/articles/${created.id}")
             .andExpect { status { isNoContent() } }
             .andReturn()
 
         assertFalse(created.id?.let { articleRepository.existsById(it) } ?: false)
+        assertFalse(comment.id?.let { commentRepository.existsById(it) } ?: false)
     }
 }
