@@ -10,7 +10,7 @@ import javax.persistence.LockModeType
 @NoRepositoryBean
 interface SpecificationDSLRepositoryExpansion<T : Any, FACTORY> {
     @Transactional
-    fun update(spec: FACTORY.() -> Specification<T>, patch: Patch<T>): T?
+    fun update(spec: FACTORY.() -> Specification<T>, patch: Patch<T>): T
 
     @Transactional
     fun findOrFail(spec: FACTORY.() -> Specification<T>, lockMode: LockModeType? = null): T

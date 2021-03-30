@@ -15,7 +15,7 @@ open class SimpleSpecificationDSLRepositoryExpansion<T : Any, ID, FACTORY>(
     val entityManager: EntityManager,
     val factory: FACTORY
 ) : SpecificationDSLRepositoryExpansion<T, FACTORY> {
-    override fun update(spec: FACTORY.() -> Specification<T>, patch: Patch<T>): T? {
+    override fun update(spec: FACTORY.() -> Specification<T>, patch: Patch<T>): T {
         return repository.update(spec(factory), patch)
     }
 

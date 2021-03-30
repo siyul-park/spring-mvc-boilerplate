@@ -23,7 +23,10 @@ class SimpleSpecificationRepositoryExpansion<T : Any, ID>(
     private val entityInformation = EntityInformationProvider.of(clazz, entityManager)
     private val queryManager = QueryManagerProvider.of(clazz, entityManager)
 
-    override fun update(spec: Specification<T>, patch: Patch<T>): T? = find(spec, LockModeType.PESSIMISTIC_WRITE)?.let { crudRepository.update(it, patch) }
+    override fun update(spec: Specification<T>, patch: Patch<T>): T =
+        find(spec, LockModeType.PESSIMISTIC_WRITE)
+            ?.let { crudRepository.update(it, patch) }
+            ?: throw EntityNotFoundException("No ${entityInformation.javaType} entity exists!")
 
     override fun findOrFail(spec: Specification<T>, lockMode: LockModeType?): T = find(spec, lockMode) ?: throw EntityNotFoundException(
         "No ${entityInformation.javaType} entity exists!"
