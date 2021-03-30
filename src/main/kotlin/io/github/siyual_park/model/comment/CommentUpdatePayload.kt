@@ -1,12 +1,10 @@
-package io.github.siyual_park.model.article
+package io.github.siyual_park.model.comment
 
 import io.github.siyual_park.model.UpdatePayload
 import org.springframework.util.MimeType
 import java.util.Optional
 
-data class ArticleUpdatePayload(
-    var title: Optional<String>? = null,
+data class CommentUpdatePayload(
     var content: Optional<String>? = null,
     var contentType: Optional<MimeType>? = null,
-    var categoryId: Optional<String>? = null,
 ) : UpdatePayload
