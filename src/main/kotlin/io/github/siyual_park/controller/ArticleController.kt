@@ -9,6 +9,7 @@ import io.github.siyual_park.model.article.ArticleResponsePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CachedCategoryRepository
+import io.github.siyual_park.repository.CommentRepository
 import io.github.siyual_park.repository.patch.LambdaPatch
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import java.util.stream.Stream
+import javax.transaction.Transactional
 
 @Api
 @RestController
@@ -32,6 +34,7 @@ import java.util.stream.Stream
 class ArticleController(
     private val articleRepository: ArticleRepository,
     categoryRepository: CachedCategoryRepository,
+    private val commentRepository: CommentRepository,
     private val articlePatchFactory: ArticlePatchFactory
 ) {
     private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
@@ -82,7 +85,9 @@ class ArticleController(
 
     @DeleteMapping("/{article-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     fun delete(@PathVariable("article-id") id: String) {
+        commentRepository.deleteAllByArticle(id)
         return articleRepository.deleteById(id)
     }
 }
