@@ -61,7 +61,7 @@ class UserControllerTest @Autowired constructor(
         val user: UserResponsePayload = objectMapper.readValue(result.response.contentAsString)
 
         assertNotNull(user.id)
-        assertEquals(user.name, payload.name)
+        assertEquals(user.name, created.name)
         assertEquals(user.nickname, payload.nickname?.get())
         assertNotNull(user.createdAt)
         assertNotNull(user.updatedAt)
