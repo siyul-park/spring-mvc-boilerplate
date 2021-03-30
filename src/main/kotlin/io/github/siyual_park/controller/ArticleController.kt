@@ -8,7 +8,7 @@ import io.github.siyual_park.model.article.ArticleResponsePayload
 import io.github.siyual_park.model.article.ArticleResponsePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
-import io.github.siyual_park.repository.CategoryRepository
+import io.github.siyual_park.repository.CachedCategoryRepository
 import io.github.siyual_park.repository.patch.LambdaPatch
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
@@ -31,7 +31,7 @@ import java.util.stream.Stream
 @RequestMapping("/articles")
 class ArticleController(
     private val articleRepository: ArticleRepository,
-    categoryRepository: CategoryRepository,
+    categoryRepository: CachedCategoryRepository,
     private val articlePatchFactory: ArticlePatchFactory
 ) {
     private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
