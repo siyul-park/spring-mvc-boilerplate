@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Api
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/comments")
 class CommentController(
     private val commentRepository: CommentRepository,
     articleRepository: ArticleRepository,

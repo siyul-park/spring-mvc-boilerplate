@@ -111,8 +111,8 @@ class CommentControllerTest @Autowired constructor(
         assertEquals(comment.content, created.content)
         assertEquals(comment.contentType, created.contentType)
         assertEquals(comment.articleId, created.article.id)
-        assertEquals(comment.updatedAt, created.updatedAt)
-        assertEquals(comment.createdAt, created.createdAt)
+        assertNotNull(comment.updatedAt)
+        assertNotNull(comment.createdAt)
     }
 
     @Test
