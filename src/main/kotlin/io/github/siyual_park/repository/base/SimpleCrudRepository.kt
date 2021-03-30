@@ -155,14 +155,18 @@ class SimpleCrudRepository<T : Any, ID>(
     }
 
     override fun deleteAll(entities: Iterable<T>) {
-        for (entity in entities) {
-            delete(entity)
+        if (!entities.iterator().hasNext()) {
+            return
         }
+
+        QueryUtils.applyAndBind(
+            queryManager.getDeleteAllQueryString(),
+            entities,
+            entityManager
+        ).executeUpdate()
     }
 
     override fun deleteAll() {
-        for (element in findAll()) {
-            delete(element)
-        }
+        entityManager.createQuery(queryManager.getDeleteAllQueryString()).executeUpdate()
     }
 }
