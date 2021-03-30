@@ -14,8 +14,7 @@ class CategoryDeleteExecutor(
     @Transactional
     fun execute(id: String) {
         val category = categoryRepository.findByIdOrFail(id)
-        articleDeleteExecutor.execute(category)
-        categoryRepository.delete(category)
+        execute(category)
     }
 
     @Transactional

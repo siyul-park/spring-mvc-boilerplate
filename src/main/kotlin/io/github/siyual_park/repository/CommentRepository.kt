@@ -14,16 +14,26 @@ class CommentRepository(
     entityManager: EntityManager
 ) : CustomRepository<Comment, String, CommentSpecification> by SimpleCustomRepository.of(entityManager, CommentSpecification) {
     @Transactional
-    fun findAllByArticles(articles: Iterable<Article>) = findAll({
-        articles.map { withArticle(it) }
-            .reduce { acc, specification -> acc.or(specification) }
-    })
+    fun findAllByArticles(articles: Iterable<Article>): List<Comment> {
+        if (!articles.iterator().hasNext()) {
+            return listOf()
+        }
+        return findAll({
+            articles.map { withArticle(it) }
+                .reduce { acc, specification -> acc.or(specification) }
+        })
+    }
 
     @Transactional
-    fun findAllByArticleIds(articleId: Iterable<String>) = findAll({
-        articleId.map { withArticle(it) }
-            .reduce { acc, specification -> acc.or(specification) }
-    })
+    fun findAllByArticleIds(articleIds: Iterable<String>): List<Comment> {
+        if (!articleIds.iterator().hasNext()) {
+            return listOf()
+        }
+        return findAll({
+            articleIds.map { withArticle(it) }
+                .reduce { acc, specification -> acc.or(specification) }
+        })
+    }
 
     @Transactional
     fun findAllByArticle(article: Article) = findAll({ withArticle(article) })
