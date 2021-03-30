@@ -1,15 +1,14 @@
 package io.github.siyual_park.controller
 
-import io.github.siyual_park.domain.ArticlePatchFactory
 import io.github.siyual_park.domain.Paginator
+import io.github.siyual_park.domain.article.ArticleDeleteExecutor
+import io.github.siyual_park.domain.article.ArticlePatchFactory
 import io.github.siyual_park.model.article.ArticleCreatePayload
 import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.article.ArticleResponsePayload
 import io.github.siyual_park.model.article.ArticleResponsePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
-import io.github.siyual_park.repository.CachedCategoryRepository
-import io.github.siyual_park.repository.CommentRepository
 import io.github.siyual_park.repository.patch.LambdaPatch
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
@@ -26,19 +25,17 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import java.util.stream.Stream
-import javax.transaction.Transactional
 
 @Api
 @RestController
 @RequestMapping("/articles")
 class ArticleController(
     private val articleRepository: ArticleRepository,
-    categoryRepository: CachedCategoryRepository,
-    private val commentRepository: CommentRepository,
+    private val articleCreatePayloadMapper: ArticleCreatePayloadMapper,
+    private val articleResponsePayloadMapper: ArticleResponsePayloadMapper,
+    private val articleDeleteExecutor: ArticleDeleteExecutor,
     private val articlePatchFactory: ArticlePatchFactory
 ) {
-    private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
-    private val articleResponsePayloadMapper = ArticleResponsePayloadMapper()
 
     private val paginator = Paginator.of(articleRepository, articleResponsePayloadMapper)
 
@@ -85,9 +82,7 @@ class ArticleController(
 
     @DeleteMapping("/{article-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Transactional
     fun delete(@PathVariable("article-id") id: String) {
-        commentRepository.deleteAllByArticle(id)
-        return articleRepository.deleteById(id)
+        articleDeleteExecutor.execute(id)
     }
 }

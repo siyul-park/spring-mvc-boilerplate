@@ -14,8 +14,26 @@ class CommentRepository(
     entityManager: EntityManager
 ) : CustomRepository<Comment, String, CommentSpecification> by SimpleCustomRepository.of(entityManager, CommentSpecification) {
     @Transactional
+    fun findAllByArticles(articles: Iterable<Article>) = findAll({
+        articles.map { withArticle(it) }
+            .reduce { acc, specification -> acc.or(specification) }
+    })
+
+    @Transactional
+    fun findAllByArticleIds(articleId: Iterable<String>) = findAll({
+        articleId.map { withArticle(it) }
+            .reduce { acc, specification -> acc.or(specification) }
+    })
+
+    @Transactional
+    fun findAllByArticle(article: Article) = findAll({ withArticle(article) })
+
+    @Transactional
+    fun findAllByArticleId(articleId: String) = findAll({ withArticle(articleId) })
+
+    @Transactional
     fun deleteAllByArticle(article: Article) = deleteAll { withArticle(article) }
 
     @Transactional
-    fun deleteAllByArticle(articleId: String) = deleteAll { withArticle(articleId) }
+    fun deleteAllByArticleId(articleId: String) = deleteAll { withArticle(articleId) }
 }

@@ -14,6 +14,12 @@ class ArticleRepository(
     entityManager: EntityManager
 ) : CustomRepository<Article, String, ArticleSpecification> by SimpleCustomRepository.of(entityManager, ArticleSpecification) {
     @Transactional
+    fun findAllByCategory(category: Category) = findAll({ withCategory(category) })
+
+    @Transactional
+    fun findAllByCategory(categoryId: String) = findAll({ withCategory(categoryId) })
+
+    @Transactional
     fun deleteAllByCategory(category: Category) = deleteAll { withCategory(category) }
 
     @Transactional

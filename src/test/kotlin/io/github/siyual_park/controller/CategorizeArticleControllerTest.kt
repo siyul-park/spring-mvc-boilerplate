@@ -17,10 +17,9 @@ import kotlin.math.ceil
 class CategorizeArticleControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val articleRepository: ArticleRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val articleCreatePayloadMapper: ArticleCreatePayloadMapper
 ) {
-
-    private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
 
     private lateinit var category: Category
     private lateinit var articleCreatePayloadMockFactory: ArticleCreatePayloadMockFactory

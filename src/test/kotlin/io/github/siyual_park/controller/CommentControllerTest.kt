@@ -34,11 +34,10 @@ class CommentControllerTest @Autowired constructor(
     private val objectMapper: ObjectMapper,
     private val commentRepository: CommentRepository,
     private val articleRepository: ArticleRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val commentCreatePayloadMapper: CommentCreatePayloadMapper,
+    private val articleCreatePayloadMapper: ArticleCreatePayloadMapper
 ) {
-
-    private val commentCreatePayloadMapper = CommentCreatePayloadMapper(articleRepository)
-    private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
 
     private lateinit var category: Category
     private lateinit var article: Article

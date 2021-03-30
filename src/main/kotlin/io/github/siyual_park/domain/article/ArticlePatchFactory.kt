@@ -1,4 +1,4 @@
-package io.github.siyual_park.domain
+package io.github.siyual_park.domain.article
 
 import io.github.siyual_park.exception.BadRequestException
 import io.github.siyual_park.model.article.Article

@@ -5,7 +5,6 @@ import io.github.siyual_park.model.comment.CommentCreatePayloadMapper
 import io.github.siyual_park.model.comment.CommentResponsePayload
 import io.github.siyual_park.model.comment.CommentResponsePayloadMapper
 import io.github.siyual_park.model.comment.CommentUpdatePayload
-import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CommentRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.swagger.annotations.Api
@@ -25,11 +24,10 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/comments")
 class CommentController(
     private val commentRepository: CommentRepository,
-    articleRepository: ArticleRepository,
+    private val commentResponsePayloadMapper: CommentResponsePayloadMapper,
+    private val commentCreatePayloadMapper: CommentCreatePayloadMapper,
     private val jsonMergePatchFactory: JsonMergePatchFactory
 ) {
-    private val commentResponsePayloadMapper = CommentResponsePayloadMapper()
-    private val commentCreatePayloadMapper = CommentCreatePayloadMapper(articleRepository)
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)

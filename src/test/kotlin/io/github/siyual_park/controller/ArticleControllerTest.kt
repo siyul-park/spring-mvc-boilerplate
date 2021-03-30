@@ -31,10 +31,9 @@ class ArticleControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
     private val articleRepository: ArticleRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val articleCreatePayloadMapper: ArticleCreatePayloadMapper
 ) {
-
-    private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
 
     private lateinit var category: Category
     private lateinit var articleCreatePayloadMockFactory: ArticleCreatePayloadMockFactory
