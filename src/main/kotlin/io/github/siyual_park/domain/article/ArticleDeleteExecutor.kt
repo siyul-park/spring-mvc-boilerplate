@@ -14,8 +14,8 @@ class ArticleDeleteExecutor(
 ) {
     @Transactional
     fun execute(id: String) {
-        commentRepository.deleteAllByArticleId(id)
-        articleRepository.deleteById(id)
+        val article = articleRepository.findByIdOrFail(id)
+        execute(article)
     }
 
     @Transactional
