@@ -1,4 +1,4 @@
-package io.github.siyual_park.repository
+package io.github.siyual_park.repository.base
 
 import org.springframework.data.repository.NoRepositoryBean
 import javax.persistence.EntityManager

@@ -1,4 +1,4 @@
-package io.github.siyual_park.repository
+package io.github.siyual_park.repository.base
 
 import javax.persistence.EntityManager
 import kotlin.reflect.KClass

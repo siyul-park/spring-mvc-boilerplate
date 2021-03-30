@@ -2,7 +2,7 @@ package io.github.siyual_park.domain
 
 import io.github.siyual_park.exception.BadRequestException
 import io.github.siyual_park.model.Mapper
-import io.github.siyual_park.repository.SpecificationPaginationRepository
+import io.github.siyual_park.repository.base.SpecificationPaginationRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification

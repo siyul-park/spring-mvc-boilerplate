@@ -1,4 +1,4 @@
-package io.github.siyual_park.repository
+package io.github.siyual_park.repository.base
 
 import io.github.siyual_park.repository.patch.Patch
 import org.springframework.data.domain.Sort
