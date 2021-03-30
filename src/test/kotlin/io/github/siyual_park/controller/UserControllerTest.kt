@@ -1,11 +1,11 @@
 package io.github.siyual_park.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.siyual_park.domain.user.UserCreatePayloadMapper
 import io.github.siyual_park.expansion.json
 import io.github.siyual_park.expansion.readValue
 import io.github.siyual_park.factory.RandomFactory
 import io.github.siyual_park.factory.UserCreatePayloadMockFactory
-import io.github.siyual_park.model.user.UserCreatePayloadMapper
 import io.github.siyual_park.model.user.UserResponsePayload
 import io.github.siyual_park.model.user.UserUpdatePayload
 import io.github.siyual_park.repository.UserRepository

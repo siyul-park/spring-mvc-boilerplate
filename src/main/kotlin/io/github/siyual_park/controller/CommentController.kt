@@ -1,9 +1,9 @@
 package io.github.siyual_park.controller
 
+import io.github.siyual_park.domain.comment.CommentCreatePayloadMapper
+import io.github.siyual_park.domain.comment.CommentResponsePayloadMapper
 import io.github.siyual_park.model.comment.CommentCreatePayload
-import io.github.siyual_park.model.comment.CommentCreatePayloadMapper
 import io.github.siyual_park.model.comment.CommentResponsePayload
-import io.github.siyual_park.model.comment.CommentResponsePayloadMapper
 import io.github.siyual_park.model.comment.CommentUpdatePayload
 import io.github.siyual_park.repository.CommentRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory

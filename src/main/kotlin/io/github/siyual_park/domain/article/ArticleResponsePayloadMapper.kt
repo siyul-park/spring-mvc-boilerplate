@@ -1,6 +1,8 @@
-package io.github.siyual_park.model.article
+package io.github.siyual_park.domain.article
 
 import io.github.siyual_park.model.Mapper
+import io.github.siyual_park.model.article.Article
+import io.github.siyual_park.model.article.ArticleResponsePayload
 import org.springframework.stereotype.Component
 
 @Component

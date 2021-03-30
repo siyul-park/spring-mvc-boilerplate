@@ -1,8 +1,8 @@
 package io.github.siyual_park.controller
 
+import io.github.siyual_park.domain.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.factory.ArticleCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
-import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.category.Category
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository

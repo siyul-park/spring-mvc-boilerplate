@@ -1,6 +1,8 @@
-package io.github.siyual_park.model.user
+package io.github.siyual_park.domain.user
 
 import io.github.siyual_park.model.Mapper
+import io.github.siyual_park.model.user.User
+import io.github.siyual_park.model.user.UserResponsePayload
 import org.springframework.stereotype.Component
 
 @Component
