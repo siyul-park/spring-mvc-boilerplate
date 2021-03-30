@@ -65,6 +65,6 @@ class SimpleSpecificationRepositoryExpansion<T : Any, ID>(
     }
 
     override fun deleteAll(spec: Specification<T>) {
-        crudRepository.deleteAll(findAll(spec, lockMode = LockModeType.PESSIMISTIC_WRITE))
+        crudRepository.deleteAll(findAll(spec))
     }
 }

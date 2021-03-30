@@ -27,8 +27,8 @@ class ArticleDeleteExecutor(
 
     @Transactional
     fun execute(category: Category) {
-        val articles = articleRepository.findAllByCategory(category, LockModeType.PESSIMISTIC_WRITE)
-        val components = commentRepository.findAllByArticleIn(articles, LockModeType.PESSIMISTIC_WRITE)
+        val articles = articleRepository.findAllByCategory(category)
+        val components = commentRepository.findAllByArticleIn(articles)
 
         commentRepository.deleteAll(components)
         articleRepository.deleteAll(articles)
