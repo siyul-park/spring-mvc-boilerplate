@@ -2,7 +2,7 @@ package io.github.siyual_park.domain
 
 import io.github.siyual_park.exception.BadRequestException
 import io.github.siyual_park.model.Mapper
-import io.github.siyual_park.repository.CustomRepository
+import io.github.siyual_park.repository.base.SpecificationPaginationRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity
 import java.util.stream.Stream
 
 class Paginator<T : Any, ID, R> private constructor(
-    private val repository: CustomRepository<T, ID, *>,
+    private val repository: SpecificationPaginationRepository<T, ID>,
     private val mapper: Mapper<T, R>
 ) {
     fun query(
@@ -47,14 +47,14 @@ class Paginator<T : Any, ID, R> private constructor(
     }
 
     companion object {
-        fun <T : Any, ID> from(repository: CustomRepository<T, ID, *>) = Paginator<T, ID, T>(
+        fun <T : Any, ID> from(repository: SpecificationPaginationRepository<T, ID>) = Paginator(
             repository,
             object : Mapper<T, T> {
                 override fun map(input: T): T = input
             }
         )
 
-        fun <T : Any, ID, R> of(repository: CustomRepository<T, ID, *>, mapper: Mapper<T, R>) = Paginator(
+        fun <T : Any, ID, R> of(repository: SpecificationPaginationRepository<T, ID>, mapper: Mapper<T, R>) = Paginator(
             repository,
             mapper
         )

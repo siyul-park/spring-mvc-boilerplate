@@ -44,7 +44,7 @@ class CommentController(
         @PathVariable("comment-id") id: String,
         @RequestBody payload: CommentUpdatePayload
     ): CommentResponsePayload {
-        return commentRepository.updateByIdOrFail(id, jsonMergePatchFactory.create(payload))
+        return commentRepository.updateById(id, jsonMergePatchFactory.create(payload))
             .let { commentResponsePayloadMapper.map(it) }
     }
 
@@ -58,6 +58,6 @@ class CommentController(
     @DeleteMapping("/{comment-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable("comment-id") id: String) {
-        return commentRepository.deleteByIdOrFail(id)
+        return commentRepository.deleteById(id)
     }
 }
