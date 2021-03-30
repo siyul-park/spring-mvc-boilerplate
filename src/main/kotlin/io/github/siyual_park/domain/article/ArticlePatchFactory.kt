@@ -1,9 +1,9 @@
-package io.github.siyual_park.domain
+package io.github.siyual_park.domain.article
 
 import io.github.siyual_park.exception.BadRequestException
 import io.github.siyual_park.model.article.Article
 import io.github.siyual_park.model.article.ArticleUpdatePayload
-import io.github.siyual_park.repository.CategoryRepository
+import io.github.siyual_park.repository.CachedCategoryRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.github.siyual_park.repository.patch.LambdaPatch
 import io.github.siyual_park.repository.patch.Patch
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class ArticlePatchFactory(
-    private val categoryRepository: CategoryRepository,
+    private val categoryRepository: CachedCategoryRepository,
     private val jsonMergePatchFactory: JsonMergePatchFactory
 ) {
     fun create(payload: ArticleUpdatePayload): Patch<Article> {

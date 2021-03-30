@@ -19,11 +19,14 @@ interface SpecificationRepositoryExpansion<T : Any> {
     fun find(spec: Specification<T>, lockMode: LockModeType? = null): T?
 
     @Transactional
-    fun findAll(spec: Specification<T>, sort: Sort? = null): List<T>
+    fun findAll(spec: Specification<T>, sort: Sort? = null, lockMode: LockModeType? = null): List<T>
 
     @Transactional
     fun count(spec: Specification<T>): Long
 
     @Transactional
     fun delete(spec: Specification<T>)
+
+    @Transactional
+    fun deleteAll(spec: Specification<T>)
 }

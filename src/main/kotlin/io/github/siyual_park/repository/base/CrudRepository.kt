@@ -41,7 +41,7 @@ interface CrudRepository<T : Any, ID> {
     fun existsById(id: ID): Boolean
 
     @Transactional
-    fun findAll(sort: Sort? = null): List<T>
+    fun findAll(sort: Sort? = null, lockMode: LockModeType? = null): List<T>
 
     @Transactional
     fun findAllById(ids: Iterable<ID>, sort: Sort? = null): List<T>

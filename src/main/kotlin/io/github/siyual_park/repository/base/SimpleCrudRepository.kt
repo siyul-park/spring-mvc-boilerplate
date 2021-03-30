@@ -105,8 +105,17 @@ class SimpleCrudRepository<T : Any, ID>(
         return query.singleResult == 1L
     }
 
-    override fun findAll(sort: Sort?): List<T> {
-        return queryManager.getQuery(null, sort ?: Sort.unsorted()).resultList
+    override fun findAll(sort: Sort?, lockMode: LockModeType?): List<T> {
+        return queryManager
+            .getQuery(null, sort ?: Sort.unsorted())
+            .resultList
+            .also {
+                if (lockMode != null) {
+                    it.forEach { entity ->
+                        entityManager.lock(entity, lockMode)
+                    }
+                }
+            }
     }
 
     override fun findAllById(ids: Iterable<ID>, sort: Sort?): List<T> {
@@ -155,14 +164,18 @@ class SimpleCrudRepository<T : Any, ID>(
     }
 
     override fun deleteAll(entities: Iterable<T>) {
-        for (entity in entities) {
-            delete(entity)
+        if (!entities.iterator().hasNext()) {
+            return
         }
+
+        QueryUtils.applyAndBind(
+            queryManager.getDeleteAllQueryString(),
+            entities,
+            entityManager
+        ).executeUpdate()
     }
 
     override fun deleteAll() {
-        for (element in findAll()) {
-            delete(element)
-        }
+        entityManager.createQuery(queryManager.getDeleteAllQueryString()).executeUpdate()
     }
 }

@@ -1,14 +1,14 @@
 package io.github.siyual_park.controller
 
-import io.github.siyual_park.domain.ArticlePatchFactory
 import io.github.siyual_park.domain.Paginator
+import io.github.siyual_park.domain.article.ArticleDeleteExecutor
+import io.github.siyual_park.domain.article.ArticlePatchFactory
 import io.github.siyual_park.model.article.ArticleCreatePayload
 import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.article.ArticleResponsePayload
 import io.github.siyual_park.model.article.ArticleResponsePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
-import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.patch.LambdaPatch
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
@@ -31,11 +31,11 @@ import java.util.stream.Stream
 @RequestMapping("/articles")
 class ArticleController(
     private val articleRepository: ArticleRepository,
-    categoryRepository: CategoryRepository,
+    private val articleCreatePayloadMapper: ArticleCreatePayloadMapper,
+    private val articleResponsePayloadMapper: ArticleResponsePayloadMapper,
+    private val articleDeleteExecutor: ArticleDeleteExecutor,
     private val articlePatchFactory: ArticlePatchFactory
 ) {
-    private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
-    private val articleResponsePayloadMapper = ArticleResponsePayloadMapper()
 
     private val paginator = Paginator.of(articleRepository, articleResponsePayloadMapper)
 
@@ -83,6 +83,6 @@ class ArticleController(
     @DeleteMapping("/{article-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable("article-id") id: String) {
-        return articleRepository.deleteById(id)
+        articleDeleteExecutor.execute(id)
     }
 }

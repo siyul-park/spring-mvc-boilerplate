@@ -41,10 +41,17 @@ class SimpleSpecificationRepositoryExpansion<T : Any, ID>(
         }
     }
 
-    override fun findAll(spec: Specification<T>, sort: Sort?): List<T> {
+    override fun findAll(spec: Specification<T>, sort: Sort?, lockMode: LockModeType?): List<T> {
         return queryManager
             .getQuery(spec, sort ?: Sort.unsorted())
             .resultList
+            .also {
+                if (lockMode != null) {
+                    it.forEach { entity ->
+                        entityManager.lock(entity, lockMode)
+                    }
+                }
+            }
     }
 
     override fun count(spec: Specification<T>): Long {
@@ -55,5 +62,9 @@ class SimpleSpecificationRepositoryExpansion<T : Any, ID>(
 
     override fun delete(spec: Specification<T>) {
         crudRepository.delete(find(spec) ?: throw EmptyResultDataAccessException("No ${entityInformation.javaType} entity exists!", 1))
+    }
+
+    override fun deleteAll(spec: Specification<T>) {
+        crudRepository.deleteAll(findAll(spec))
     }
 }

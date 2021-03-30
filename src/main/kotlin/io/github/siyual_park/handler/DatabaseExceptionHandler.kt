@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import java.sql.SQLIntegrityConstraintViolationException
 import javax.persistence.EntityExistsException
 import javax.persistence.EntityNotFoundException
 
@@ -30,6 +31,12 @@ class DatabaseExceptionHandler {
     @ExceptionHandler(EntityNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handle(exception: EntityNotFoundException): ErrorResponse {
+        return ErrorResponse(exception.message)
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    fun handle(exception: SQLIntegrityConstraintViolationException): ErrorResponse {
         return ErrorResponse(exception.message)
     }
 }

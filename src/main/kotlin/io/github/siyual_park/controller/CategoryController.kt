@@ -1,6 +1,7 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.Paginator
+import io.github.siyual_park.domain.category.CategoryDeleteExecutor
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.model.category.CategoryCreatePayload
 import io.github.siyual_park.model.category.CategoryResponsePayload
@@ -28,10 +29,11 @@ import java.util.stream.Stream
 @RequestMapping("/categories")
 class CategoryController(
     private val categoryRepository: CategoryRepository,
+    private val categoryResponsePayloadMapper: CategoryResponsePayloadMapper,
+    private val categoryDeleteExecutor: CategoryDeleteExecutor,
     private val jsonMergePatchFactory: JsonMergePatchFactory
 ) {
 
-    private val categoryResponsePayloadMapper = CategoryResponsePayloadMapper()
     private val paginator = Paginator.of(categoryRepository, categoryResponsePayloadMapper)
 
     @PostMapping("")
@@ -85,6 +87,6 @@ class CategoryController(
     @DeleteMapping("/{category-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable("category-id") id: String) {
-        return categoryRepository.deleteById(id)
+        categoryDeleteExecutor.execute(id)
     }
 }

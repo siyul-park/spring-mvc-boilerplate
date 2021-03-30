@@ -19,11 +19,14 @@ interface SpecificationDSLRepositoryExpansion<T : Any, FACTORY> {
     fun find(spec: FACTORY.() -> Specification<T>, lockMode: LockModeType? = null): T?
 
     @Transactional
-    fun findAll(spec: FACTORY.() -> Specification<T>, sort: Sort? = null): List<T>
+    fun findAll(spec: FACTORY.() -> Specification<T>, sort: Sort? = null, lockMode: LockModeType? = null): List<T>
 
     @Transactional
     fun count(spec: FACTORY.() -> Specification<T>): Long
 
     @Transactional
     fun delete(spec: FACTORY.() -> Specification<T>)
+
+    @Transactional
+    fun deleteAll(spec: FACTORY.() -> Specification<T>)
 }

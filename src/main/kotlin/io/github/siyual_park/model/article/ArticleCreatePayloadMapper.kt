@@ -1,10 +1,12 @@
 package io.github.siyual_park.model.article
 
 import io.github.siyual_park.model.Mapper
-import io.github.siyual_park.repository.CategoryRepository
+import io.github.siyual_park.repository.CachedCategoryRepository
+import org.springframework.stereotype.Component
 
+@Component
 class ArticleCreatePayloadMapper(
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CachedCategoryRepository
 ) : Mapper<ArticleCreatePayload, Article> {
     override fun map(input: ArticleCreatePayload): Article {
         val category = categoryRepository.findByIdOrFail(input.categoryId)

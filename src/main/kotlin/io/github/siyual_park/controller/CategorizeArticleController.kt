@@ -22,9 +22,8 @@ import java.util.stream.Stream
 class CategorizeArticleController(
     articleRepository: ArticleRepository,
     private val categoryRepository: CategoryRepository,
+    articleResponsePayloadMapper: ArticleResponsePayloadMapper
 ) {
-
-    private val articleResponsePayloadMapper = ArticleResponsePayloadMapper()
 
     private val paginator = Paginator.of(articleRepository, articleResponsePayloadMapper)
 

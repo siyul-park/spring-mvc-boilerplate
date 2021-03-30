@@ -22,9 +22,9 @@ import java.util.stream.Stream
 @RequestMapping("/articles")
 class ArticleCommentController(
     commentRepository: CommentRepository,
-    private val articleRepository: ArticleRepository
+    private val articleRepository: ArticleRepository,
+    commentResponsePayloadMapper: CommentResponsePayloadMapper
 ) {
-    private val commentResponsePayloadMapper = CommentResponsePayloadMapper()
     private val paginator = Paginator.of(commentRepository, commentResponsePayloadMapper)
 
     @GetMapping("/{article-id}/comments")

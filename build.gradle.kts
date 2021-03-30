@@ -1,6 +1,7 @@
 val kotlin_version: String by project
 val jcabi_manifests_version: String by project
 val springfox_version: String by project
+val guava_version: String by project
 
 buildscript {
     val klint_version: String by project
@@ -49,6 +50,8 @@ dependencies {
 
     implementation("io.springfox:springfox-boot-starter:$springfox_version")
     implementation("io.springfox:springfox-swagger-ui:$springfox_version")
+
+    implementation("com.google.guava:guava:$guava_version")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.h2database:h2")
