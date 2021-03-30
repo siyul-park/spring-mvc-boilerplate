@@ -14,7 +14,7 @@ class CommentRepository(
     entityManager: EntityManager
 ) : CustomRepository<Comment, String, CommentSpecification> by SimpleCustomRepository.of(entityManager, CommentSpecification) {
     @Transactional
-    fun findAllByArticles(articles: Iterable<Article>): List<Comment> {
+    fun findAllByArticleIn(articles: Iterable<Article>): List<Comment> {
         if (!articles.iterator().hasNext()) {
             return listOf()
         }
@@ -25,7 +25,7 @@ class CommentRepository(
     }
 
     @Transactional
-    fun findAllByArticleIds(articleIds: Iterable<String>): List<Comment> {
+    fun findAllByArticleIdIn(articleIds: Iterable<String>): List<Comment> {
         if (!articleIds.iterator().hasNext()) {
             return listOf()
         }

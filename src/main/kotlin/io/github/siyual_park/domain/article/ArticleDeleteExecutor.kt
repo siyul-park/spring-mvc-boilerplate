@@ -27,7 +27,7 @@ class ArticleDeleteExecutor(
     @Transactional
     fun execute(category: Category) {
         val articles = articleRepository.findAllByCategory(category)
-        val components = commentRepository.findAllByArticles(articles)
+        val components = commentRepository.findAllByArticleIn(articles)
 
         commentRepository.deleteAll(components)
         articleRepository.deleteAll(articles)
