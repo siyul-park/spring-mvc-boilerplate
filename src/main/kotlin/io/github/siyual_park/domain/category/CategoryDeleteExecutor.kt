@@ -4,6 +4,7 @@ import io.github.siyual_park.domain.article.ArticleDeleteExecutor
 import io.github.siyual_park.model.category.Category
 import io.github.siyual_park.repository.CategoryRepository
 import org.springframework.stereotype.Component
+import javax.persistence.LockModeType
 import javax.transaction.Transactional
 
 @Component
@@ -13,7 +14,7 @@ class CategoryDeleteExecutor(
 ) {
     @Transactional
     fun execute(id: String) {
-        val category = categoryRepository.findByIdOrFail(id)
+        val category = categoryRepository.findByIdOrFail(id, LockModeType.PESSIMISTIC_WRITE)
         execute(category)
     }
 

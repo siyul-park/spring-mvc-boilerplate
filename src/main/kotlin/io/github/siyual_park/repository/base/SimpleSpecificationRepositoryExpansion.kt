@@ -41,10 +41,17 @@ class SimpleSpecificationRepositoryExpansion<T : Any, ID>(
         }
     }
 
-    override fun findAll(spec: Specification<T>, sort: Sort?): List<T> {
+    override fun findAll(spec: Specification<T>, sort: Sort?, lockMode: LockModeType?): List<T> {
         return queryManager
             .getQuery(spec, sort ?: Sort.unsorted())
             .resultList
+            .also {
+                if (lockMode != null) {
+                    it.forEach { entity ->
+                        entityManager.lock(entity, lockMode)
+                    }
+                }
+            }
     }
 
     override fun count(spec: Specification<T>): Long {
