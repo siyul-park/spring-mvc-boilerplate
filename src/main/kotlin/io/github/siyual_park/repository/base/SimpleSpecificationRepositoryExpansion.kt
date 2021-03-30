@@ -41,7 +41,7 @@ class SimpleSpecificationRepositoryExpansion<T : Any, ID>(
         }
     }
 
-    override fun findAll(spec: Specification<T>, sort: Sort?, lockMode: LockModeType?): List<T> {
+    override fun findAll(spec: Specification<T>, lockMode: LockModeType?, sort: Sort?): List<T> {
         return queryManager
             .getQuery(spec, sort ?: Sort.unsorted())
             .resultList
