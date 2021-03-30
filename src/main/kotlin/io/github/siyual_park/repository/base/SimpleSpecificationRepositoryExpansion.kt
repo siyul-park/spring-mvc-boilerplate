@@ -56,4 +56,8 @@ class SimpleSpecificationRepositoryExpansion<T : Any, ID>(
     override fun delete(spec: Specification<T>) {
         crudRepository.delete(find(spec) ?: throw EmptyResultDataAccessException("No ${entityInformation.javaType} entity exists!", 1))
     }
+
+    override fun deleteAll(spec: Specification<T>) {
+        crudRepository.deleteAll(findAll(spec))
+    }
 }

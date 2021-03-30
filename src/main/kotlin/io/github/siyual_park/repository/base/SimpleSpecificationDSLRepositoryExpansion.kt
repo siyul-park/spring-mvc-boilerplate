@@ -38,4 +38,8 @@ open class SimpleSpecificationDSLRepositoryExpansion<T : Any, ID, FACTORY>(
     override fun delete(spec: FACTORY.() -> Specification<T>) {
         return repository.delete(spec(factory))
     }
+
+    override fun deleteAll(spec: FACTORY.() -> Specification<T>) {
+        return repository.deleteAll(spec(factory))
+    }
 }

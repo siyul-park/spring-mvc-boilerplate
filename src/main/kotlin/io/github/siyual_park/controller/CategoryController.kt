@@ -5,6 +5,7 @@ import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.model.category.CategoryCreatePayload
 import io.github.siyual_park.model.category.CategoryResponsePayload
 import io.github.siyual_park.model.category.CategoryResponsePayloadMapper
+import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.swagger.annotations.Api
@@ -28,6 +29,7 @@ import java.util.stream.Stream
 @RequestMapping("/categories")
 class CategoryController(
     private val categoryRepository: CategoryRepository,
+    private val articleRepository: ArticleRepository,
     private val jsonMergePatchFactory: JsonMergePatchFactory
 ) {
 
@@ -85,6 +87,7 @@ class CategoryController(
     @DeleteMapping("/{category-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable("category-id") id: String) {
+        articleRepository.deleteAllByCategory(id)
         return categoryRepository.deleteById(id)
     }
 }

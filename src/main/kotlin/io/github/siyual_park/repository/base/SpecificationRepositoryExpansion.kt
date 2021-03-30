@@ -26,4 +26,7 @@ interface SpecificationRepositoryExpansion<T : Any> {
 
     @Transactional
     fun delete(spec: Specification<T>)
+
+    @Transactional
+    fun deleteAll(spec: Specification<T>)
 }
