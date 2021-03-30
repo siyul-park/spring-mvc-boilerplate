@@ -1,5 +1,6 @@
 package io.github.siyual_park.controller
 
+import com.google.common.base.CaseFormat
 import io.github.siyual_park.model.ErrorResponse
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController
 import org.springframework.boot.web.error.ErrorAttributeOptions
@@ -10,9 +11,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
-import java.time.Instant
 import java.util.Collections
-import java.util.Date
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -50,12 +49,19 @@ class ErrorController(
         val body: Map<String, Any> = getErrorAttributes(request, getErrorAttributeOptions())
         return ResponseEntity(
             ErrorResponse(
-                message = if (status.is5xxServerError) {
-                    "Internal Server Error"
+                error = CaseFormat.UPPER_CAMEL.to(
+                    CaseFormat.LOWER_UNDERSCORE,
+                    if (status.is5xxServerError) {
+                        "InternalServerError"
+                    } else {
+                        body["error"] as? String ?: ""
+                    }
+                ),
+                errorDescription = if (status.is5xxServerError) {
+                    null
                 } else {
-                    body["message"] as? String ?: ""
-                },
-                timestamp = (body["timestamp"] as? Date)?.toInstant() ?: Instant.now()
+                    body["message"] as? String
+                }
             ),
             status
         )

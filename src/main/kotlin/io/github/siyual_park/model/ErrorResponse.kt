@@ -1,8 +1,18 @@
 package io.github.siyual_park.model
 
-import java.time.Instant
+import com.google.common.base.CaseFormat
+import java.lang.Exception
+import java.net.URI
 
 data class ErrorResponse(
-    val message: String?,
-    val timestamp: Instant = Instant.now()
-)
+    val error: String,
+    val errorDescription: String? = null,
+    val errorUri: URI? = null
+) {
+    companion object {
+        fun from(exception: Exception) = ErrorResponse(
+            CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, exception.javaClass.simpleName),
+            exception.message
+        )
+    }
+}
