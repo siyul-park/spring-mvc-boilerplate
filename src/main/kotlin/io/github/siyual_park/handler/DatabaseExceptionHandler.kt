@@ -19,24 +19,24 @@ class DatabaseExceptionHandler {
     @ExceptionHandler(EmptyResultDataAccessException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handle(exception: EmptyResultDataAccessException): ErrorResponse {
-        return ErrorResponse(exception.message)
+        return ErrorResponse.from(exception)
     }
 
     @ExceptionHandler(EntityExistsException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handle(exception: EntityExistsException): ErrorResponse {
-        return ErrorResponse(exception.message)
+        return ErrorResponse.from(exception)
     }
 
     @ExceptionHandler(EntityNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handle(exception: EntityNotFoundException): ErrorResponse {
-        return ErrorResponse(exception.message)
+        return ErrorResponse.from(exception)
     }
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handle(exception: SQLIntegrityConstraintViolationException): ErrorResponse {
-        return ErrorResponse(exception.message)
+        return ErrorResponse.from(exception)
     }
 }
