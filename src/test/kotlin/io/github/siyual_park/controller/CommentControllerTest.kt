@@ -37,7 +37,7 @@ class CommentControllerTest @Autowired constructor(
     private val categoryRepository: CategoryRepository
 ) {
 
-    private val commentCreatePayloadMapper = CommentCreatePayloadMapper()
+    private val commentCreatePayloadMapper = CommentCreatePayloadMapper(articleRepository)
     private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
 
     private lateinit var category: Category
