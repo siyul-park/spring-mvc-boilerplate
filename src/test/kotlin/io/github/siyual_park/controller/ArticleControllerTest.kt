@@ -5,8 +5,8 @@ import io.github.siyual_park.expansion.json
 import io.github.siyual_park.expansion.readValue
 import io.github.siyual_park.factory.ArticleCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
-import io.github.siyual_park.model.article.Article
 import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
+import io.github.siyual_park.model.article.ArticleResponsePayload
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.model.category.Category
 import io.github.siyual_park.repository.ArticleRepository
@@ -53,7 +53,7 @@ class ArticleControllerTest @Autowired constructor(
             .andExpect { status { isCreated() } }
             .andReturn()
 
-        val article: Article = objectMapper.readValue(result.response.contentAsString)
+        val article: ArticleResponsePayload = objectMapper.readValue(result.response.contentAsString)
 
         assertNotNull(article.id)
         assertEquals(article.title, payload.title)
@@ -75,7 +75,7 @@ class ArticleControllerTest @Autowired constructor(
             .andExpect { status { isOk() } }
             .andReturn()
 
-        val article: Article = objectMapper.readValue(result.response.contentAsString)
+        val article: ArticleResponsePayload = objectMapper.readValue(result.response.contentAsString)
 
         assertEquals(article.id, created.id)
         assertEquals(article.title, titleUpdatePayload.title?.get())
@@ -94,7 +94,7 @@ class ArticleControllerTest @Autowired constructor(
             .andExpect { status { isOk() } }
             .andReturn()
 
-        val article: Article = objectMapper.readValue(result.response.contentAsString)
+        val article: ArticleResponsePayload = objectMapper.readValue(result.response.contentAsString)
 
         assertEquals(article.id, created.id)
         assertEquals(article.title, created.title)
