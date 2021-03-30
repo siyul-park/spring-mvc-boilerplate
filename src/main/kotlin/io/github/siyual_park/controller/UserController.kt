@@ -9,6 +9,8 @@ import io.github.siyual_park.repository.UserRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.swagger.annotations.Api
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -42,5 +44,25 @@ class UserController(
     ): UserResponsePayload {
         return userRepository.updateById(id, jsonMergePatchFactory.create(payload))
             .let { userResponsePayloadMapper.map(it) }
+    }
+
+    @GetMapping("/{user-id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun findById(@PathVariable("user-id") id: String): UserResponsePayload {
+        return userRepository.findByIdOrFail(id)
+            .let { userResponsePayloadMapper.map(it) }
+    }
+
+    @GetMapping("/@{user-name}")
+    @ResponseStatus(HttpStatus.OK)
+    fun findByName(@PathVariable("user-name") name: String): UserResponsePayload {
+        return userRepository.findByNameOrFail(name)
+            .let { userResponsePayloadMapper.map(it) }
+    }
+
+    @DeleteMapping("/{user-id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun delete(@PathVariable("user-id") id: String) {
+        return userRepository.deleteById(id)
     }
 }

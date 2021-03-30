@@ -10,10 +10,13 @@ import io.github.siyual_park.model.user.UserResponsePayload
 import io.github.siyual_park.model.user.UserUpdatePayload
 import io.github.siyual_park.repository.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 import java.util.Optional
@@ -65,5 +68,56 @@ class UserControllerTest @Autowired constructor(
         assertEquals(user.nickname, payload.nickname?.get())
         assertNotNull(user.createdAt)
         assertNotNull(user.updatedAt)
+    }
+
+    @Test
+    fun testFindById() {
+        val created = userCreatePayloadMockFactory.create()
+            .let { userCreatePayloadMapper.map(it) }
+            .let { userRepository.create(it) }
+
+        val result = mockMvc.get("/users/${created.id}")
+            .andExpect { status { isOk() } }
+            .andReturn()
+
+        val user: UserResponsePayload = objectMapper.readValue(result.response.contentAsString)
+
+        assertEquals(user.id, created.id)
+        assertEquals(user.name, created.name)
+        assertEquals(user.nickname, created.nickname)
+        assertNotNull(user.createdAt)
+        assertNotNull(user.updatedAt)
+    }
+
+    @Test
+    fun testFindByName() {
+        val created = userCreatePayloadMockFactory.create()
+            .let { userCreatePayloadMapper.map(it) }
+            .let { userRepository.create(it) }
+
+        val result = mockMvc.get("/users/@${created.name}")
+            .andExpect { status { isOk() } }
+            .andReturn()
+
+        val user: UserResponsePayload = objectMapper.readValue(result.response.contentAsString)
+
+        assertEquals(user.id, created.id)
+        assertEquals(user.name, created.name)
+        assertEquals(user.nickname, created.nickname)
+        assertNotNull(user.createdAt)
+        assertNotNull(user.updatedAt)
+    }
+
+    @Test
+    fun testDelete() {
+        val created = userCreatePayloadMockFactory.create()
+            .let { userCreatePayloadMapper.map(it) }
+            .let { userRepository.create(it) }
+
+        mockMvc.delete("/users/${created.id}")
+            .andExpect { status { isNoContent() } }
+            .andReturn()
+
+        assertFalse(created.id?.let { userRepository.existsById(it) } ?: false)
     }
 }
