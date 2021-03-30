@@ -3,11 +3,17 @@ package io.github.siyual_park.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.siyual_park.expansion.json
 import io.github.siyual_park.expansion.readValue
+import io.github.siyual_park.factory.ArticleCreatePayloadMockFactory
 import io.github.siyual_park.factory.CategoryCreatePayloadMockFactory
+import io.github.siyual_park.factory.CommentCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
+import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.model.category.CategoryResponsePayload
+import io.github.siyual_park.model.comment.CommentCreatePayloadMapper
+import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
+import io.github.siyual_park.repository.CommentRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -26,7 +32,11 @@ import kotlin.math.ceil
 class CategoryControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val articleRepository: ArticleRepository,
+    private val commentRepository: CommentRepository,
+    private val articleCreatePayloadMapper: ArticleCreatePayloadMapper,
+    private val commentCreatePayloadMapper: CommentCreatePayloadMapper
 ) {
 
     private val categoryCreatePayloadMockFactory = CategoryCreatePayloadMockFactory()
@@ -123,10 +133,20 @@ class CategoryControllerTest @Autowired constructor(
         val created = categoryCreatePayloadMockFactory.create()
             .let { categoryRepository.create(it.toCategory()) }
 
+        val articleCreatePayloadMockFactory = ArticleCreatePayloadMockFactory(created)
+        val article = articleCreatePayloadMockFactory.create()
+            .let { articleRepository.create(articleCreatePayloadMapper.map(it)) }
+
+        val commentCreatePayloadMockFactory = CommentCreatePayloadMockFactory(article)
+        val comment = commentCreatePayloadMockFactory.create()
+            .let { commentRepository.create(commentCreatePayloadMapper.map(it)) }
+
         mockMvc.delete("/categories/${created.id}")
             .andExpect { status { isNoContent() } }
             .andReturn()
 
         assertFalse(created.id?.let { categoryRepository.existsById(it) } ?: false)
+        assertFalse(article.id?.let { articleRepository.existsById(it) } ?: false)
+        assertFalse(comment.id?.let { commentRepository.existsById(it) } ?: false)
     }
 }
