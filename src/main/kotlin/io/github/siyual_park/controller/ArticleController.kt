@@ -5,6 +5,8 @@ import io.github.siyual_park.domain.Paginator
 import io.github.siyual_park.model.article.Article
 import io.github.siyual_park.model.article.ArticleCreatePayload
 import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
+import io.github.siyual_park.model.article.ArticleResponsePayload
+import io.github.siyual_park.model.article.ArticleResponsePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
@@ -34,7 +36,9 @@ class ArticleController(
     private val articlePatchFactory: ArticlePatchFactory
 ) {
     private val articleCreatePayloadMapper = ArticleCreatePayloadMapper(categoryRepository)
-    private val paginator = Paginator(articleRepository)
+    private val articleResponsePayloadMapper = ArticleResponsePayloadMapper()
+
+    private val paginator = Paginator.of(articleRepository, articleResponsePayloadMapper)
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
@@ -47,8 +51,9 @@ class ArticleController(
     fun update(
         @PathVariable("article-id") id: String,
         @RequestBody payload: ArticleUpdatePayload
-    ): Article {
+    ): ArticleResponsePayload {
         return articleRepository.updateByIdOrFail(id, articlePatchFactory.create(payload))
+            .let { articleResponsePayloadMapper.map(it) }
     }
 
     @GetMapping("")
@@ -57,7 +62,7 @@ class ArticleController(
         @RequestParam("per_page", required = false) limit: Int?,
         @RequestParam("sort", required = false) property: String?,
         @RequestParam("order", required = false) direction: Sort.Direction?
-    ): ResponseEntity<Stream<Article>> {
+    ): ResponseEntity<Stream<ArticleResponsePayload>> {
         return paginator.query(
             offset = offset,
             limit = limit,
@@ -67,8 +72,9 @@ class ArticleController(
 
     @GetMapping("/{article-id}")
     @ResponseStatus(HttpStatus.OK)
-    fun find(@PathVariable("article-id") id: String): Article {
+    fun find(@PathVariable("article-id") id: String): ArticleResponsePayload {
         return articleRepository.updateByIdOrFail(id, LambdaPatch.from { views += 1 })
+            .let { articleResponsePayloadMapper.map(it) }
     }
 
     @DeleteMapping("/{article-id}")
