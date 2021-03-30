@@ -2,8 +2,9 @@ package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.Paginator
 import io.github.siyual_park.model.article.ArticleUpdatePayload
-import io.github.siyual_park.model.category.Category
 import io.github.siyual_park.model.category.CategoryCreatePayload
+import io.github.siyual_park.model.category.CategoryResponsePayload
+import io.github.siyual_park.model.category.CategoryResponsePayloadMapper
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.swagger.annotations.Api
@@ -30,12 +31,14 @@ class CategoryController(
     private val jsonMergePatchFactory: JsonMergePatchFactory
 ) {
 
-    private val paginator = Paginator(categoryRepository)
+    private val categoryResponsePayloadMapper = CategoryResponsePayloadMapper()
+    private val paginator = Paginator.of(categoryRepository, categoryResponsePayloadMapper)
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody payload: CategoryCreatePayload): Category {
+    fun create(@RequestBody payload: CategoryCreatePayload): CategoryResponsePayload {
         return categoryRepository.create(payload.toCategory())
+            .let { categoryResponsePayloadMapper.map(it) }
     }
 
     @PatchMapping("/{category-id}")
@@ -43,8 +46,9 @@ class CategoryController(
     fun update(
         @PathVariable("category-id") id: String,
         @RequestBody payload: ArticleUpdatePayload
-    ): Category {
+    ): CategoryResponsePayload {
         return categoryRepository.updateByIdOrFail(id, jsonMergePatchFactory.create(payload))
+            .let { categoryResponsePayloadMapper.map(it) }
     }
 
     @GetMapping("")
@@ -53,7 +57,7 @@ class CategoryController(
         @RequestParam("per_page", required = false) limit: Int?,
         @RequestParam("sort", required = false) property: String?,
         @RequestParam("order", required = false) direction: Sort.Direction?
-    ): ResponseEntity<Stream<Category>> {
+    ): ResponseEntity<Stream<CategoryResponsePayload>> {
         return paginator.query(
             offset = offset,
             limit = limit,
@@ -63,14 +67,16 @@ class CategoryController(
 
     @GetMapping("/{category-id}")
     @ResponseStatus(HttpStatus.OK)
-    fun findById(@PathVariable("category-id") id: String): Category {
+    fun findById(@PathVariable("category-id") id: String): CategoryResponsePayload {
         return categoryRepository.findByIdOrFail(id)
+            .let { categoryResponsePayloadMapper.map(it) }
     }
 
     @GetMapping("/@{category-name}")
     @ResponseStatus(HttpStatus.OK)
-    fun findByName(@PathVariable("category-name") name: String): Category {
+    fun findByName(@PathVariable("category-name") name: String): CategoryResponsePayload {
         return categoryRepository.findByNameOrFail(name)
+            .let { categoryResponsePayloadMapper.map(it) }
     }
 
     @DeleteMapping("/{category-id}")

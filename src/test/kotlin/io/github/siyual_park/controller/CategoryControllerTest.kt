@@ -6,7 +6,7 @@ import io.github.siyual_park.expansion.readValue
 import io.github.siyual_park.factory.CategoryCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
 import io.github.siyual_park.model.article.ArticleUpdatePayload
-import io.github.siyual_park.model.category.Category
+import io.github.siyual_park.model.category.CategoryResponsePayload
 import io.github.siyual_park.repository.CategoryRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -39,7 +39,7 @@ class CategoryControllerTest @Autowired constructor(
             .andExpect { status { isCreated() } }
             .andReturn()
 
-        val category: Category = objectMapper.readValue(result.response.contentAsString)
+        val category: CategoryResponsePayload = objectMapper.readValue(result.response.contentAsString)
 
         assertNotNull(category.id)
         assertEquals(category.name, payload.name)
@@ -59,7 +59,7 @@ class CategoryControllerTest @Autowired constructor(
             .andExpect { status { isOk() } }
             .andReturn()
 
-        val category: Category = objectMapper.readValue(result.response.contentAsString)
+        val category: CategoryResponsePayload = objectMapper.readValue(result.response.contentAsString)
 
         assertNotNull(category.id)
         assertEquals(category.name, created.name)
@@ -76,7 +76,7 @@ class CategoryControllerTest @Autowired constructor(
             .andExpect { status { isOk() } }
             .andReturn()
 
-        val category: Category = objectMapper.readValue(result.response.contentAsString)
+        val category: CategoryResponsePayload = objectMapper.readValue(result.response.contentAsString)
 
         assertEquals(category.id, created.id)
         assertEquals(category.name, created.name)
@@ -93,7 +93,7 @@ class CategoryControllerTest @Autowired constructor(
             .andExpect { status { isOk() } }
             .andReturn()
 
-        val category: Category = objectMapper.readValue(result.response.contentAsString)
+        val category: CategoryResponsePayload = objectMapper.readValue(result.response.contentAsString)
 
         assertEquals(category.id, created.id)
         assertEquals(category.name, created.name)
