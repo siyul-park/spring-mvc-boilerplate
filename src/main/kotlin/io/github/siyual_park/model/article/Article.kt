@@ -2,6 +2,7 @@ package io.github.siyual_park.model.article
 
 import io.github.siyual_park.model.BaseEntity
 import io.github.siyual_park.model.category.Category
+import org.hibernate.annotations.DynamicUpdate
 import org.springframework.util.MimeType
 import javax.persistence.Entity
 import javax.persistence.JoinColumn
@@ -10,6 +11,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "articles")
+@DynamicUpdate
 data class Article(
     var title: String,
     var content: String,
