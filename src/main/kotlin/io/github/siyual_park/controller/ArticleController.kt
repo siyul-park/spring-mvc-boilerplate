@@ -2,7 +2,6 @@ package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.ArticlePatchFactory
 import io.github.siyual_park.domain.Paginator
-import io.github.siyual_park.model.article.Article
 import io.github.siyual_park.model.article.ArticleCreatePayload
 import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.article.ArticleResponsePayload
@@ -42,8 +41,9 @@ class ArticleController(
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody payload: ArticleCreatePayload): Article {
+    fun create(@RequestBody payload: ArticleCreatePayload): ArticleResponsePayload {
         return articleRepository.create(articleCreatePayloadMapper.map(payload))
+            .let { articleResponsePayloadMapper.map(it) }
     }
 
     @PatchMapping("/{article-id}")
