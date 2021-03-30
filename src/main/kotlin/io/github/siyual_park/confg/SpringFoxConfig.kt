@@ -1,6 +1,7 @@
 package io.github.siyual_park.confg
 
 import io.swagger.annotations.Api
+import io.swagger.annotations.ApiOperation
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.util.MimeType
@@ -19,7 +20,10 @@ class SpringFoxConfig {
             directModelSubstitute(MimeType::class.java, String::class.java)
         }
             .select()
-            .apis(RequestHandlerSelectors.withClassAnnotation(Api::class.java))
+            .apis(
+                RequestHandlerSelectors.withClassAnnotation(Api::class.java)
+                    .or(RequestHandlerSelectors.withMethodAnnotation(ApiOperation::class.java))
+            )
             .paths(PathSelectors.any())
             .build()
     }
