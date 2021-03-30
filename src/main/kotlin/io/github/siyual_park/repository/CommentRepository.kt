@@ -18,10 +18,7 @@ class CommentRepository(
         if (!articles.iterator().hasNext()) {
             return listOf()
         }
-        return findAll({
-            articles.map { withArticle(it) }
-                .reduce { acc, specification -> acc.or(specification) }
-        })
+        return findAll({ withArticles(articles) })
     }
 
     @Transactional
@@ -29,10 +26,7 @@ class CommentRepository(
         if (!articleIds.iterator().hasNext()) {
             return listOf()
         }
-        return findAll({
-            articleIds.map { withArticle(it) }
-                .reduce { acc, specification -> acc.or(specification) }
-        })
+        return findAll({ withArticleIds(articleIds) })
     }
 
     @Transactional
