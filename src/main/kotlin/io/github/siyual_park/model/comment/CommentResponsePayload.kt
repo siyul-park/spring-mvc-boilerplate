@@ -1,31 +1,26 @@
-package io.github.siyual_park.model.article
+package io.github.siyual_park.model.comment
 
 import org.springframework.util.MimeType
 import java.time.Instant
 
-data class ArticleResponsePayload(
+data class CommentResponsePayload(
     val id: String,
-    var categoryId: String,
 
-    var title: String,
+    var articleId: String,
 
     var content: String,
     var contentType: MimeType,
-
-    var views: Long,
 
     val createdAt: Instant,
     val updatedAt: Instant?
 ) {
     companion object {
-        fun from(article: Article) = with(article) {
-            ArticleResponsePayload(
+        fun from(comment: Comment) = with(comment) {
+            CommentResponsePayload(
                 id!!,
-                category.id!!,
-                title,
+                article.id!!,
                 content,
                 contentType,
-                views,
                 createdAt!!,
                 updatedAt
             )

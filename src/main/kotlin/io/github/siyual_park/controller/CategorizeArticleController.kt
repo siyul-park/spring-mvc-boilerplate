@@ -1,7 +1,8 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.Paginator
-import io.github.siyual_park.model.article.Article
+import io.github.siyual_park.model.article.ArticleResponsePayload
+import io.github.siyual_park.model.article.ArticleResponsePayloadMapper
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.specification.ArticleSpecification
@@ -23,7 +24,9 @@ class CategorizeArticleController(
     private val categoryRepository: CategoryRepository,
 ) {
 
-    private val paginator = Paginator(articleRepository)
+    private val articleResponsePayloadMapper = ArticleResponsePayloadMapper()
+
+    private val paginator = Paginator.of(articleRepository, articleResponsePayloadMapper)
 
     @GetMapping("/{category-id}/articles")
     fun findAllById(
@@ -32,7 +35,7 @@ class CategorizeArticleController(
         @RequestParam("per_page", required = false) limit: Int?,
         @RequestParam("sort", required = false) property: String?,
         @RequestParam("order", required = false) direction: Sort.Direction?
-    ): ResponseEntity<Stream<Article>> {
+    ): ResponseEntity<Stream<ArticleResponsePayload>> {
         val category = categoryRepository.findByIdOrFail(id)
 
         return paginator.query(
@@ -50,7 +53,7 @@ class CategorizeArticleController(
         @RequestParam("per_page", required = false) limit: Int?,
         @RequestParam("sort", required = false) property: String?,
         @RequestParam("order", required = false) direction: Sort.Direction?
-    ): ResponseEntity<Stream<Article>> {
+    ): ResponseEntity<Stream<ArticleResponsePayload>> {
         val category = categoryRepository.findByNameOrFail(name)
 
         return paginator.query(

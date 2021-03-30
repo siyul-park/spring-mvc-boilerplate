@@ -10,7 +10,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import java.util.stream.Stream
 
-class Paginator<T : Any, ID, R>(
+class Paginator<T : Any, ID, R> private constructor(
     private val repository: CustomRepository<T, ID, *>,
     private val mapper: Mapper<T, R>
 ) {

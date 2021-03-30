@@ -1,8 +1,9 @@
 package io.github.siyual_park.controller
 
-import io.github.siyual_park.model.comment.Comment
 import io.github.siyual_park.model.comment.CommentCreatePayload
 import io.github.siyual_park.model.comment.CommentCreatePayloadMapper
+import io.github.siyual_park.model.comment.CommentResponsePayload
+import io.github.siyual_park.model.comment.CommentResponsePayloadMapper
 import io.github.siyual_park.model.comment.CommentUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CommentRepository
@@ -27,12 +28,14 @@ class CommentController(
     articleRepository: ArticleRepository,
     private val jsonMergePatchFactory: JsonMergePatchFactory
 ) {
+    private val commentResponsePayloadMapper = CommentResponsePayloadMapper()
     private val commentCreatePayloadMapper = CommentCreatePayloadMapper(articleRepository)
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody payload: CommentCreatePayload): Comment {
+    fun create(@RequestBody payload: CommentCreatePayload): CommentResponsePayload {
         return commentRepository.create(commentCreatePayloadMapper.map(payload))
+            .let { commentResponsePayloadMapper.map(it) }
     }
 
     @PatchMapping("/{comment-id}")
@@ -40,14 +43,16 @@ class CommentController(
     fun update(
         @PathVariable("comment-id") id: String,
         @RequestBody payload: CommentUpdatePayload
-    ): Comment {
+    ): CommentResponsePayload {
         return commentRepository.updateByIdOrFail(id, jsonMergePatchFactory.create(payload))
+            .let { commentResponsePayloadMapper.map(it) }
     }
 
     @GetMapping("/{comment-id}")
     @ResponseStatus(HttpStatus.OK)
-    fun find(@PathVariable("comment-id") id: String): Comment {
+    fun find(@PathVariable("comment-id") id: String): CommentResponsePayload {
         return commentRepository.findByIdOrFail(id)
+            .let { commentResponsePayloadMapper.map(it) }
     }
 
     @DeleteMapping("/{comment-id}")

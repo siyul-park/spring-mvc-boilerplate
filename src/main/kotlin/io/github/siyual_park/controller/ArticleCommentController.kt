@@ -2,6 +2,8 @@ package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.Paginator
 import io.github.siyual_park.model.comment.Comment
+import io.github.siyual_park.model.comment.CommentResponsePayload
+import io.github.siyual_park.model.comment.CommentResponsePayloadMapper
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CommentRepository
 import io.github.siyual_park.repository.specification.CommentSpecification
@@ -22,8 +24,8 @@ class ArticleCommentController(
     commentRepository: CommentRepository,
     private val articleRepository: ArticleRepository
 ) {
-
-    private val paginator = Paginator(commentRepository)
+    private val commentResponsePayloadMapper = CommentResponsePayloadMapper()
+    private val paginator = Paginator.of(commentRepository, commentResponsePayloadMapper)
 
     @GetMapping("/{article-id}/comments")
     fun findAllById(
@@ -32,7 +34,7 @@ class ArticleCommentController(
         @RequestParam("per_page", required = false) limit: Int?,
         @RequestParam("sort", required = false) property: String?,
         @RequestParam("order", required = false) direction: Sort.Direction?
-    ): ResponseEntity<Stream<Comment>> {
+    ): ResponseEntity<Stream<CommentResponsePayload>> {
         val article = articleRepository.findByIdOrFail(id)
 
         return paginator.query(
