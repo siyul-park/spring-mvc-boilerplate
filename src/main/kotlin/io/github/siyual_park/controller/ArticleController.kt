@@ -52,7 +52,7 @@ class ArticleController(
         @PathVariable("article-id") id: String,
         @RequestBody payload: ArticleUpdatePayload
     ): ArticleResponsePayload {
-        return articleRepository.updateByIdOrFail(id, articlePatchFactory.create(payload))
+        return articleRepository.updateById(id, articlePatchFactory.create(payload))
             .let { articleResponsePayloadMapper.map(it) }
     }
 
@@ -73,14 +73,14 @@ class ArticleController(
     @GetMapping("/{article-id}")
     @ResponseStatus(HttpStatus.OK)
     fun find(@PathVariable("article-id") id: String): ArticleResponsePayload {
-        return articleRepository.updateByIdOrFail(id, LambdaPatch.from { views += 1 })
+        return articleRepository.updateById(id, LambdaPatch.from { views += 1 })
             .let { articleResponsePayloadMapper.map(it) }
     }
 
     @DeleteMapping("/{article-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable("article-id") id: String) {
-        return articleRepository.deleteByIdOrFail(id)
+        return articleRepository.deleteById(id)
     }
 
     private fun createSort(

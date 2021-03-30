@@ -47,7 +47,7 @@ class CategoryController(
         @PathVariable("category-id") id: String,
         @RequestBody payload: ArticleUpdatePayload
     ): CategoryResponsePayload {
-        return categoryRepository.updateByIdOrFail(id, jsonMergePatchFactory.create(payload))
+        return categoryRepository.updateById(id, jsonMergePatchFactory.create(payload))
             .let { categoryResponsePayloadMapper.map(it) }
     }
 
@@ -82,7 +82,7 @@ class CategoryController(
     @DeleteMapping("/{category-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable("category-id") id: String) {
-        return categoryRepository.deleteByIdOrFail(id)
+        return categoryRepository.deleteById(id)
     }
 
     private fun createSort(
