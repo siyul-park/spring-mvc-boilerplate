@@ -1,8 +1,8 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.Paginator
+import io.github.siyual_park.domain.article.ArticleResponsePayloadMapper
 import io.github.siyual_park.model.article.ArticleResponsePayload
-import io.github.siyual_park.model.article.ArticleResponsePayloadMapper
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.specification.ArticleSpecification

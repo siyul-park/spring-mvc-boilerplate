@@ -1,16 +1,16 @@
 package io.github.siyual_park.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.siyual_park.domain.article.ArticleCreatePayloadMapper
+import io.github.siyual_park.domain.comment.CommentCreatePayloadMapper
 import io.github.siyual_park.expansion.json
 import io.github.siyual_park.expansion.readValue
 import io.github.siyual_park.factory.ArticleCreatePayloadMockFactory
 import io.github.siyual_park.factory.CategoryCreatePayloadMockFactory
 import io.github.siyual_park.factory.CommentCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
-import io.github.siyual_park.model.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.model.category.CategoryResponsePayload
-import io.github.siyual_park.model.comment.CommentCreatePayloadMapper
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.CommentRepository

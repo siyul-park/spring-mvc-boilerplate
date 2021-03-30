@@ -1,12 +1,12 @@
 package io.github.siyual_park.controller
 
+import io.github.siyual_park.domain.user.UserCreatePayloadMapper
+import io.github.siyual_park.domain.user.UserPatchFactory
+import io.github.siyual_park.domain.user.UserResponsePayloadMapper
 import io.github.siyual_park.model.user.UserCreatePayload
-import io.github.siyual_park.model.user.UserCreatePayloadMapper
 import io.github.siyual_park.model.user.UserResponsePayload
-import io.github.siyual_park.model.user.UserResponsePayloadMapper
 import io.github.siyual_park.model.user.UserUpdatePayload
 import io.github.siyual_park.repository.UserRepository
-import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.swagger.annotations.Api
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -26,7 +26,7 @@ class UserController(
     private val userRepository: UserRepository,
     private val userCreatePayloadMapper: UserCreatePayloadMapper,
     private val userResponsePayloadMapper: UserResponsePayloadMapper,
-    private val jsonMergePatchFactory: JsonMergePatchFactory
+    private val userPatchFactory: UserPatchFactory
 ) {
 
     @PostMapping("")
@@ -42,7 +42,7 @@ class UserController(
         @PathVariable("user-id") id: String,
         @RequestBody payload: UserUpdatePayload
     ): UserResponsePayload {
-        return userRepository.updateById(id, jsonMergePatchFactory.create(payload))
+        return userRepository.updateById(id, userPatchFactory.create(payload))
             .let { userResponsePayloadMapper.map(it) }
     }
 

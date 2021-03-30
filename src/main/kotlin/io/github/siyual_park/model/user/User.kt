@@ -14,5 +14,11 @@ data class User(
     @Column(nullable = false)
     var nickname: String,
     @Column(nullable = false)
-    var password: String
-) : BaseEntity()
+    var password: String,
+    @Column(nullable = false)
+    var hashAlgorithm: String = defaultHashAlgorithm
+) : BaseEntity() {
+    companion object {
+        const val defaultHashAlgorithm = "SHA-256"
+    }
+}
