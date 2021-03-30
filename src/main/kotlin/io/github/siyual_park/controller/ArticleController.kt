@@ -66,7 +66,10 @@ class ArticleController(
         return paginator.query(
             offset = offset,
             limit = limit,
-            sort = createSort(property, direction)
+            sort = Sort.by(
+                direction ?: Sort.Direction.ASC,
+                property ?: "id"
+            )
         )
     }
 
@@ -82,12 +85,4 @@ class ArticleController(
     fun delete(@PathVariable("article-id") id: String) {
         return articleRepository.deleteById(id)
     }
-
-    private fun createSort(
-        property: String?,
-        direction: Sort.Direction?
-    ) = Sort.by(
-        direction ?: Sort.Direction.ASC,
-        property ?: "id"
-    )
 }

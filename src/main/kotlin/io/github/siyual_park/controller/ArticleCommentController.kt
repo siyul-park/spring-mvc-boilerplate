@@ -40,16 +40,11 @@ class ArticleCommentController(
         return paginator.query(
             offset = offset,
             limit = limit,
-            sort = createSort(property, direction),
+            sort = Sort.by(
+                direction ?: Sort.Direction.ASC,
+                property ?: Comment::createdAt.name
+            ),
             spec = CommentSpecification.withArticle(article)
         )
     }
-
-    private fun createSort(
-        property: String?,
-        direction: Sort.Direction?
-    ) = Sort.by(
-        direction ?: Sort.Direction.ASC,
-        property ?: Comment::createdAt.name
-    )
 }
