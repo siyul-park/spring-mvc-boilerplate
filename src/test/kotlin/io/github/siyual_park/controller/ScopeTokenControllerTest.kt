@@ -13,7 +13,10 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import java.time.Instant
+import kotlin.math.ceil
 
 @ControllerTest
 class ScopeTokenControllerTest @Autowired constructor(
@@ -64,5 +67,63 @@ class ScopeTokenControllerTest @Autowired constructor(
         assertTrue(response.children?.size == 1)
         assertNotNull(response.createdAt)
         assertNotNull(response.updatedAt)
+    }
+
+    @Test
+    fun testFindById() {
+        val created = scopeTokenCreatePayloadMockFactory.create()
+            .let { scopeTokenCreatePayloadMapper.map(it) }
+            .let { scopeTokenRepository.create(it) }
+
+        val result = mockMvc.get("/scope-tokens/${created.id}")
+            .andExpect { status { isOk() } }
+            .andReturn()
+
+        val response: ScopeTokenResponsePayload = objectMapper.readValue(result.response.contentAsString)
+
+        assertEquals(response.id, created.id)
+        assertEquals(response.name, created.name)
+        assertEquals(response.description, created.description)
+        assertTrue(response.children?.isEmpty() == true)
+        assertEquals(response.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
+        assertEquals(response.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
+    }
+
+    @Test
+    fun testFindByName() {
+        val created = scopeTokenCreatePayloadMockFactory.create()
+            .let { scopeTokenCreatePayloadMapper.map(it) }
+            .let { scopeTokenRepository.create(it) }
+
+        val result = mockMvc.get("/scope-tokens/@${created.name}")
+            .andExpect { status { isOk() } }
+            .andReturn()
+
+        val response: ScopeTokenResponsePayload = objectMapper.readValue(result.response.contentAsString)
+
+        assertEquals(response.id, created.id)
+        assertEquals(response.name, created.name)
+        assertEquals(response.description, created.description)
+        assertTrue(response.children?.isEmpty() == true)
+        assertEquals(response.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
+        assertEquals(response.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
+    }
+
+    @Test
+    fun testFindByAll() {
+        scopeTokenCreatePayloadMockFactory.create()
+            .let { scopeTokenCreatePayloadMapper.map(it) }
+            .let { scopeTokenRepository.create(it) }
+        val count = scopeTokenRepository.count()
+
+        mockMvc.get("/scope-tokens")
+            .andExpect {
+                status { isOk() }
+                header {
+                    string("Total-Count", count.toString())
+                    string("Total-Page", ceil(count / 20.0).toInt().toString())
+                }
+            }
+            .andReturn()
     }
 }
