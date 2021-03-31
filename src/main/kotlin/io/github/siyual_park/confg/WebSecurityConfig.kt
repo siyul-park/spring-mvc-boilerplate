@@ -28,8 +28,7 @@ class WebSecurityConfig(
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .formLogin()
-            .disable()
+            .formLogin().disable()
 
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
