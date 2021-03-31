@@ -2,6 +2,7 @@ package io.github.siyual_park.domain.security
 
 import io.github.siyual_park.confg.TokenProperty
 import io.github.siyual_park.domain.scope.ScopeFetchExecutor
+import io.github.siyual_park.model.scope.ScopeToken
 import io.github.siyual_park.model.token.Token
 import io.github.siyual_park.model.user.User
 import io.jsonwebtoken.Claims
@@ -22,11 +23,20 @@ class TokenManager(
 ) {
     private val secretKey: SecretKey = Keys.hmacShaKeyFor(tokenProperty.secret.toByteArray())
 
-    fun generateToken(user: User, expiresIn: Long) = Token(
-        user.id!!,
-        Instant.now().plus(Duration.ofSeconds(expiresIn)),
-        scopeFetchExecutor.execute(user, 0)
-    )
+    fun generateToken(user: User, expiresIn: Long, scope: Set<ScopeToken>? = null) {
+        val finalScope = if (scope != null) {
+            val allScope = scopeFetchExecutor.execute(user)
+            scope.filter { allScope.contains(it) }.toSet()
+        } else {
+            scopeFetchExecutor.execute(user, 0)
+        }
+
+        Token(
+            user.id!!,
+            Instant.now().plus(Duration.ofSeconds(expiresIn)),
+            finalScope
+        )
+    }
 
     @Cacheable("TokenManager.encode(Token)")
     fun encode(token: Token): String {
