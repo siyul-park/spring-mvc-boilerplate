@@ -23,7 +23,7 @@ class TokenManager(
 ) {
     private val secretKey: SecretKey = Keys.hmacShaKeyFor(tokenProperty.secret.toByteArray())
 
-    fun generateToken(user: User, expiresIn: Long, scope: Set<ScopeToken>? = null) {
+    fun generateToken(user: User, expiresIn: Long, scope: Set<ScopeToken>? = null): Token {
         val finalScope = if (scope != null) {
             val allScope = scopeFetchExecutor.execute(user)
             scope.filter { allScope.contains(it) }.toSet()
@@ -31,7 +31,7 @@ class TokenManager(
             scopeFetchExecutor.execute(user, 0)
         }
 
-        Token(
+        return Token(
             user.id!!,
             Instant.now().plus(Duration.ofSeconds(expiresIn)),
             finalScope
