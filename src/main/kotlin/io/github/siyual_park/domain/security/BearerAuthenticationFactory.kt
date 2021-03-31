@@ -16,8 +16,9 @@ class BearerAuthenticationFactory(
         if (!token.isValid()) {
             throw ExpiredTokenException()
         }
+        val user = userRepository.findByIdOrFail(token.userId)
 
-        return TokenAuthentication(token, userRepository)
+        return TokenAuthentication(token, user)
     }
 
     override fun supports(type: String): Boolean {
