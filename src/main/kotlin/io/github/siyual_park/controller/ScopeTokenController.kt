@@ -34,7 +34,7 @@ class ScopeTokenController(
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody payload: ScopeTokenCreatePayload): ScopeTokenResponsePayload {
         val children = payload.children?.let {
-            scopeTokenRepository.findAllById(it)
+            scopeTokenRepository.findAllByIdIn(it)
         } ?: emptyList()
 
         val scopeToken = scopeTokenCreatePayloadMapper.map(payload)
