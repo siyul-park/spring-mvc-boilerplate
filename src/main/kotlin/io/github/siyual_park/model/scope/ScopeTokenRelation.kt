@@ -12,8 +12,8 @@ import javax.persistence.UniqueConstraint
 @Table(
     name = "scope_token_relations",
     indexes = [
-        Index(name = "index_scope_tokens_parent_id", columnList = "parent_id"),
-        Index(name = "index_scope_tokens_child_id", columnList = "child_id")
+        Index(name = "index_scope_token_relations_parent_id", columnList = "parent_id"),
+        Index(name = "index_scope_token_relations_child_id", columnList = "child_id")
     ],
     uniqueConstraints = [
         UniqueConstraint(
