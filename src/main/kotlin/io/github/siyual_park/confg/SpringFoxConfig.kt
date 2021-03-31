@@ -4,7 +4,9 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.util.MimeType
+import springfox.documentation.annotations.ApiIgnore
 import springfox.documentation.builders.PathSelectors
 import springfox.documentation.builders.RequestHandlerSelectors
 import springfox.documentation.service.ApiKey
@@ -30,6 +32,7 @@ class SpringFoxConfig {
             )
             .paths(PathSelectors.any())
             .build()
+            .ignoredParameterTypes(ApiIgnore::class.java, AuthenticationPrincipal::class.java)
             .securitySchemes(listOf(apiKey()))
             .securityContexts(listOf(securityContext()))
     }
