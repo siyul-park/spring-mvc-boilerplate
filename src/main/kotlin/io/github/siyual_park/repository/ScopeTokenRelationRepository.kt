@@ -27,6 +27,12 @@ class ScopeTokenRelationRepository(
     fun deleteAllByParent(parentId: String) = deleteAll { withParent(parentId) }
 
     @Transactional
+    fun findAllByChild(child: ScopeToken, lockMode: LockModeType? = null) = findAll({ withChild(child) }, lockMode = lockMode)
+
+    @Transactional
+    fun findAllByChild(childId: String, lockMode: LockModeType? = null) = findAll({ withChild(childId) }, lockMode = lockMode)
+
+    @Transactional
     fun findAllByParent(parent: ScopeToken, lockMode: LockModeType? = null) = findAll({ withParent(parent) }, lockMode = lockMode)
 
     @Transactional

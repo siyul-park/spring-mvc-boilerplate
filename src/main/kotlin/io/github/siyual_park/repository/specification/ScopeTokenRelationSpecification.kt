@@ -6,7 +6,7 @@ import io.github.siyual_park.repository.expansion.get
 import org.springframework.data.jpa.domain.Specification
 
 object ScopeTokenRelationSpecification {
-    fun withChild(child: ScopeToken) = withChild(parent.id!!)
+    fun withChild(child: ScopeToken) = withChild(child.id!!)
 
     fun withChild(childId: String) = Specification<ScopeTokenRelation> { root, _, builder ->
         builder.equal(root[ScopeTokenRelation::child][ScopeToken::id], childId)

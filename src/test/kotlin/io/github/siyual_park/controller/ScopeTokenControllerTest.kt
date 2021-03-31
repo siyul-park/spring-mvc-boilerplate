@@ -6,13 +6,16 @@ import io.github.siyual_park.expansion.json
 import io.github.siyual_park.expansion.readValue
 import io.github.siyual_park.factory.ScopeTokenCreatePayloadMockFactory
 import io.github.siyual_park.model.scope.ScopeTokenResponsePayload
+import io.github.siyual_park.repository.ScopeTokenRelationRepository
 import io.github.siyual_park.repository.ScopeTokenRepository
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import java.time.Instant
@@ -23,6 +26,7 @@ class ScopeTokenControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
     private val scopeTokenRepository: ScopeTokenRepository,
+    private val scopeTokenRelationRepository: ScopeTokenRelationRepository,
     private val scopeTokenCreatePayloadMapper: ScopeTokenCreatePayloadMapper
 ) {
 
@@ -125,5 +129,43 @@ class ScopeTokenControllerTest @Autowired constructor(
                 }
             }
             .andReturn()
+    }
+
+    @Test
+    fun testDeleteById() {
+        val child = scopeTokenCreatePayloadMockFactory.create()
+            .let { scopeTokenCreatePayloadMapper.map(it) }
+            .let { scopeTokenRepository.create(it) }
+
+        val parent = scopeTokenCreatePayloadMockFactory.create()
+            .apply { children = setOf(child.id!!) }
+            .let { scopeTokenCreatePayloadMapper.map(it) }
+            .let { scopeTokenRepository.create(it) }
+
+        mockMvc.delete("/scope-tokens/${parent.id}")
+            .andExpect { status { isNoContent() } }
+            .andReturn()
+
+        assertFalse(parent.id?.let { scopeTokenRepository.existsById(it) } ?: false)
+        assertFalse(parent.id?.let { scopeTokenRelationRepository.findAllByParent(it).isNotEmpty() } ?: false)
+    }
+
+    @Test
+    fun testDeleteByName() {
+        val child = scopeTokenCreatePayloadMockFactory.create()
+            .let { scopeTokenCreatePayloadMapper.map(it) }
+            .let { scopeTokenRepository.create(it) }
+
+        scopeTokenCreatePayloadMockFactory.create()
+            .apply { children = setOf(child.id!!) }
+            .let { scopeTokenCreatePayloadMapper.map(it) }
+            .let { scopeTokenRepository.create(it) }
+
+        mockMvc.delete("/scope-tokens/${child.id}")
+            .andExpect { status { isNoContent() } }
+            .andReturn()
+
+        assertFalse(child.id?.let { scopeTokenRepository.existsById(it) } ?: false)
+        assertFalse(child.id?.let { scopeTokenRelationRepository.findAllByChild(it).isNotEmpty() } ?: false)
     }
 }
