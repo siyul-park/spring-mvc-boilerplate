@@ -35,7 +35,9 @@ class AuthenticationFilter(
                 val credentials = tokens[1]
 
                 val authenticationFactory = authenticationFactoryManager.get(type)
-                SecurityContextHolder.getContext().authentication = authenticationFactory.create(credentials)
+                SecurityContextHolder.getContext().authentication = authenticationFactory.create(credentials).apply {
+                    isAuthenticated = true
+                }
             }
         } catch (e: RuntimeException) {
             httpResponse.status = HttpServletResponse.SC_UNAUTHORIZED
