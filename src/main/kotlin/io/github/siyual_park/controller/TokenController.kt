@@ -2,7 +2,8 @@ package io.github.siyual_park.controller
 
 import io.github.siyual_park.confg.TokenProperty
 import io.github.siyual_park.domain.security.HashEncoder
-import io.github.siyual_park.domain.security.TokenManager
+import io.github.siyual_park.domain.security.TokenExchanger
+import io.github.siyual_park.domain.security.TokenFactory
 import io.github.siyual_park.exception.UnauthorizedException
 import io.github.siyual_park.model.token.TokenResponsePayload
 import io.github.siyual_park.repository.UserRepository
@@ -20,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/token")
 class TokenController(
     private val userRepository: UserRepository,
-    private val tokenManager: TokenManager,
+    private val tokenExchanger: TokenExchanger,
+    private val tokenFactory: TokenFactory,
     private val tokenProperty: TokenProperty
 ) {
 
@@ -35,8 +37,8 @@ class TokenController(
             throw UnauthorizedException("Password incorrect")
         }
 
-        val token = tokenManager.generateToken(user, tokenProperty.expiresIn)
-        val accessToken = tokenManager.encode(token)
+        val token = tokenFactory.create(user, tokenProperty.expiresIn)
+        val accessToken = tokenExchanger.encode(token)
 
         return TokenResponsePayload(
             accessToken,

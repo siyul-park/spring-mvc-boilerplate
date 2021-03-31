@@ -1,7 +1,7 @@
 package io.github.siyual_park.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.siyual_park.domain.security.TokenManager
+import io.github.siyual_park.domain.security.TokenExchanger
 import io.github.siyual_park.domain.user.UserCreatePayloadMapper
 import io.github.siyual_park.expansion.readValue
 import io.github.siyual_park.factory.UserCreatePayloadMockFactory
@@ -20,7 +20,7 @@ class TokenControllerTest @Autowired constructor(
     private val objectMapper: ObjectMapper,
     private val userRepository: UserRepository,
     private val userCreatePayloadMapper: UserCreatePayloadMapper,
-    private val tokenManager: TokenManager
+    private val tokenExchanger: TokenExchanger
 ) {
 
     private val userCreatePayloadMockFactory = UserCreatePayloadMockFactory()
@@ -42,7 +42,7 @@ class TokenControllerTest @Autowired constructor(
         val tokenPayload: TokenResponsePayload = objectMapper.readValue(result.response.contentAsString)
         assertEquals(tokenPayload.tokenType, "bearer")
 
-        val token = tokenManager.decode(tokenPayload.accessToken)
+        val token = tokenExchanger.decode(tokenPayload.accessToken)
         assertEquals(token.userId, user.id)
     }
 }

@@ -17,26 +17,12 @@ import java.util.Date
 import javax.crypto.SecretKey
 
 @Component
-class TokenManager(
+class TokenExchanger(
     tokenProperty: TokenProperty,
     private val scopeFetchExecutor: ScopeFetchExecutor
 ) {
     private val secretKey: SecretKey = Keys.hmacShaKeyFor(tokenProperty.secret.toByteArray())
 
-    fun generateToken(user: User, expiresIn: Long, scope: Set<ScopeToken>? = null): Token {
-        val finalScope = if (scope != null) {
-            val allScope = scopeFetchExecutor.execute(user)
-            scope.filter { allScope.contains(it) }.toSet()
-        } else {
-            scopeFetchExecutor.execute(user, 0)
-        }
-
-        return Token(
-            user.id!!,
-            Instant.now().plus(Duration.ofSeconds(expiresIn)),
-            finalScope
-        )
-    }
 
     @Cacheable("TokenManager.encode(Token)")
     fun encode(token: Token): String {

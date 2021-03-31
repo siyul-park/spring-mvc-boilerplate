@@ -51,12 +51,10 @@ class ScopeFetchExecutor(
             return setOf(scopeToken)
         }
 
-        val compacted: MutableSet<ScopeToken> = children
+        return children
             .map { execute(it, depth?.let { depth - 1 }) }
-            .fold(mutableSetOf()) { acc, set ->
+            .fold(mutableSetOf(scopeToken)) { acc, set ->
                 acc.apply { addAll(set) }
             }
-
-        return compacted.also { it.add(scopeToken) }
     }
 }
