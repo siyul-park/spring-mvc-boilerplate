@@ -1,6 +1,7 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.user.UserCreatePayloadMapper
+import io.github.siyual_park.domain.user.UserDeleteExecutor
 import io.github.siyual_park.domain.user.UserPatchFactory
 import io.github.siyual_park.domain.user.UserResponsePayloadMapper
 import io.github.siyual_park.model.user.UserCreatePayload
@@ -26,6 +27,7 @@ class UserController(
     private val userRepository: UserRepository,
     private val userCreatePayloadMapper: UserCreatePayloadMapper,
     private val userResponsePayloadMapper: UserResponsePayloadMapper,
+    private val userDeleteExecutor: UserDeleteExecutor,
     private val userPatchFactory: UserPatchFactory
 ) {
 
@@ -63,6 +65,6 @@ class UserController(
     @DeleteMapping("/{user-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable("user-id") id: String) {
-        return userRepository.deleteById(id)
+        return userDeleteExecutor.execute(id)
     }
 }

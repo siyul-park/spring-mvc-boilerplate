@@ -44,7 +44,7 @@ interface CrudRepository<T : Any, ID> {
     fun findAll(sort: Sort? = null, lockMode: LockModeType? = null): List<T>
 
     @Transactional
-    fun findAllById(ids: Iterable<ID>, sort: Sort? = null): List<T>
+    fun findAllByIdIn(ids: Iterable<ID>, sort: Sort? = null): List<T>
 
     @Transactional
     fun count(): Long

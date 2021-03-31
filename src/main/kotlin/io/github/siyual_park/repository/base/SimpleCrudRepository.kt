@@ -118,7 +118,7 @@ class SimpleCrudRepository<T : Any, ID>(
             }
     }
 
-    override fun findAllById(ids: Iterable<ID>, sort: Sort?): List<T> {
+    override fun findAllByIdIn(ids: Iterable<ID>, sort: Sort?): List<T> {
         if (!ids.iterator().hasNext()) {
             return emptyList()
         }
