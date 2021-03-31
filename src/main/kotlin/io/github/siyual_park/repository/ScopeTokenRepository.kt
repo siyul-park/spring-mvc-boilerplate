@@ -14,6 +14,9 @@ class ScopeTokenRepository(
     entityManager: EntityManager
 ) : CustomRepository<ScopeToken, String, ScopeTokenSpecification> by SimpleCustomRepository.of(entityManager, ScopeTokenSpecification) {
     @Transactional
+    fun findAllByNameIn(names: Iterable<String>, lockMode: LockModeType? = null): List<ScopeToken> = findAll({ withNameIn(names) }, lockMode)
+
+    @Transactional
     fun findByNameOrFail(name: String, lockMode: LockModeType? = null): ScopeToken = findOrFail({ withName(name) }, lockMode)
 
     @Transactional
