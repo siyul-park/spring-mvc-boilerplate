@@ -1,6 +1,7 @@
 package io.github.siyual_park.domain.security
 
 import io.github.siyual_park.confg.TokenProperty
+import io.github.siyual_park.domain.scope.ScopeFetchExecutor
 import io.github.siyual_park.model.token.Token
 import io.github.siyual_park.model.user.User
 import io.jsonwebtoken.Claims
@@ -17,14 +18,14 @@ import javax.crypto.SecretKey
 @Component
 class TokenManager(
     tokenProperty: TokenProperty,
-    private val scopeFetchProcessor: ScopeFetchProcessor
+    private val scopeFetchExecutor: ScopeFetchExecutor
 ) {
     private val secretKey: SecretKey = Keys.hmacShaKeyFor(tokenProperty.secret.toByteArray())
 
     fun generateToken(user: User, expiresIn: Long) = Token(
         user.id!!,
         Instant.now().plus(Duration.ofSeconds(expiresIn)),
-        scopeFetchProcessor.process(user)
+        scopeFetchExecutor.execute(user)
     )
 
     @Cacheable("TokenManager.encode(Token)")
@@ -50,7 +51,7 @@ class TokenManager(
         return Token(
             id = body["jti"] as String,
             userId = body["sub"] as String,
-            scope = scopeFetchProcessor.process(body["scope"] as String),
+            scope = scopeFetchExecutor.execute(body["scope"] as String),
             createdAt = Instant.ofEpochSecond((body["iat"] as Int).toLong()),
             expiredAt = Instant.ofEpochSecond((body["exp"] as Int).toLong()),
         )
