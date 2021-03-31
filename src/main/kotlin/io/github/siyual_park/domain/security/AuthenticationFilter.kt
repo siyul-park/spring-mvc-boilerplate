@@ -1,7 +1,6 @@
-package io.github.siyual_park.filter
+package io.github.siyual_park.domain.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.siyual_park.domain.security.AuthenticationFactoryManager
 import io.github.siyual_park.exception.InvalidAuthorizationHeaderFormatException
 import io.github.siyual_park.model.ErrorResponse
 import org.springframework.http.MediaType

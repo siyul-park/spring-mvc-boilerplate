@@ -1,24 +1,26 @@
 package io.github.siyual_park.confg
 
 import io.github.siyual_park.domain.security.AuthenticationFactoryManager
+import io.github.siyual_park.domain.security.AuthenticationFilter
 import io.github.siyual_park.domain.security.BearerAuthenticationFactory
-import io.github.siyual_park.filter.AuthenticationFilter
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import javax.annotation.PostConstruct
 
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig(
     private val authenticationFilter: AuthenticationFilter,
-    authenticationFactoryManager: AuthenticationFactoryManager,
-    bearerAuthenticationFactory: BearerAuthenticationFactory
+    private val authenticationFactoryManager: AuthenticationFactoryManager,
+    private val bearerAuthenticationFactory: BearerAuthenticationFactory
 ) : WebSecurityConfigurerAdapter() {
 
-    init {
+    @PostConstruct
+    fun registerAuthenticationFactory() {
         authenticationFactoryManager.register(bearerAuthenticationFactory)
     }
 
