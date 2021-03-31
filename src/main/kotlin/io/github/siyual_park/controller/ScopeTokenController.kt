@@ -4,6 +4,7 @@ import io.github.siyual_park.domain.Paginator
 import io.github.siyual_park.domain.scope.ScopeFetchExecutor
 import io.github.siyual_park.domain.scope.ScopeResponsePayloadMapper
 import io.github.siyual_park.domain.scope.ScopeTokenCreatePayloadMapper
+import io.github.siyual_park.model.scope.ScopeToken
 import io.github.siyual_park.model.scope.ScopeTokenCreatePayload
 import io.github.siyual_park.model.scope.ScopeTokenRelation
 import io.github.siyual_park.model.scope.ScopeTokenResponsePayload
@@ -67,7 +68,7 @@ class ScopeTokenController(
             limit = limit,
             sort = Sort.by(
                 direction ?: Sort.Direction.ASC,
-                property ?: "id"
+                property ?: ScopeToken::createdAt.name
             )
         )
     }
