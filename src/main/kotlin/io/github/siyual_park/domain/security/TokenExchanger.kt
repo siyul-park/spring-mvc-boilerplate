@@ -2,16 +2,13 @@ package io.github.siyual_park.domain.security
 
 import io.github.siyual_park.confg.TokenProperty
 import io.github.siyual_park.domain.scope.ScopeFetchExecutor
-import io.github.siyual_park.model.scope.ScopeToken
 import io.github.siyual_park.model.token.Token
-import io.github.siyual_park.model.user.User
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
-import java.time.Duration
 import java.time.Instant
 import java.util.Date
 import javax.crypto.SecretKey
@@ -22,7 +19,6 @@ class TokenExchanger(
     private val scopeFetchExecutor: ScopeFetchExecutor
 ) {
     private val secretKey: SecretKey = Keys.hmacShaKeyFor(tokenProperty.secret.toByteArray())
-
 
     @Cacheable("TokenManager.encode(Token)")
     fun encode(token: Token): String {

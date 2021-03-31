@@ -10,4 +10,8 @@ data class Token(
     var scope: Set<ScopeToken> = setOf(),
     val id: String = UUID.randomUUID().toString(),
     val createdAt: Instant = Instant.now()
-)
+) {
+    fun isValid(): Boolean {
+        return expiredAt.isBefore(Instant.now())
+    }
+}
