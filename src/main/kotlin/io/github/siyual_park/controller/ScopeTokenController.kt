@@ -79,7 +79,7 @@ class ScopeTokenController(
             .let { scopeResponsePayloadMapper.map(it) }
     }
 
-    @GetMapping("/@{category-name}")
+    @GetMapping("/@{scope-token-name}")
     @ResponseStatus(HttpStatus.OK)
     fun findByName(@PathVariable("scope-token-name") name: String): ScopeTokenResponsePayload {
         return scopeTokenRepository.findByNameOrFail(name)
