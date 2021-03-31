@@ -1,7 +1,6 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.Paginator
-import io.github.siyual_park.domain.scope.ScopeFetchExecutor
 import io.github.siyual_park.domain.scope.ScopeResponsePayloadMapper
 import io.github.siyual_park.domain.scope.ScopeTokenCreatePayloadMapper
 import io.github.siyual_park.domain.scope.ScopeTokenDeleteExecutor
@@ -11,7 +10,6 @@ import io.github.siyual_park.model.scope.ScopeTokenRelation
 import io.github.siyual_park.model.scope.ScopeTokenResponsePayload
 import io.github.siyual_park.repository.ScopeTokenRelationRepository
 import io.github.siyual_park.repository.ScopeTokenRepository
-import io.github.siyual_park.repository.UserScopeTokenRepository
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
@@ -33,12 +31,9 @@ import java.util.stream.Stream
 class ScopeTokenController(
     private val scopeTokenRepository: ScopeTokenRepository,
     private val scopeTokenRelationRepository: ScopeTokenRelationRepository,
-    private val userScopeTokenRepository: UserScopeTokenRepository,
-    private val scopeFetchExecutor: ScopeFetchExecutor,
     private val scopeTokenDeleteExecutor: ScopeTokenDeleteExecutor,
     private val scopeResponsePayloadMapper: ScopeResponsePayloadMapper,
     private val scopeTokenCreatePayloadMapper: ScopeTokenCreatePayloadMapper,
-
 ) {
 
     private val paginator = Paginator.of(scopeTokenRepository, scopeResponsePayloadMapper)
