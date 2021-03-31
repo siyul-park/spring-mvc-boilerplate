@@ -161,7 +161,7 @@ class ScopeTokenControllerTest @Autowired constructor(
             .let { scopeTokenCreatePayloadMapper.map(it) }
             .let { scopeTokenRepository.create(it) }
 
-        mockMvc.delete("/scope-tokens/${child.id}")
+        mockMvc.delete("/scope-tokens/@${child.name}")
             .andExpect { status { isNoContent() } }
             .andReturn()
 
