@@ -10,6 +10,10 @@ class TokenAuthentication(
 ) : AbstractAuthenticationToken(token.scope) {
     private var user: User? = null
 
+    init {
+        isAuthenticated = true
+    }
+
     override fun getCredentials(): Any {
         return token
     }
