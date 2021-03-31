@@ -12,6 +12,6 @@ data class Token(
     val createdAt: Instant = Instant.now()
 ) {
     fun isValid(): Boolean {
-        return expiredAt.isBefore(Instant.now())
+        return expiredAt.isAfter(Instant.now())
     }
 }
