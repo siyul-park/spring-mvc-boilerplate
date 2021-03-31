@@ -25,7 +25,7 @@ class TokenManager(
     fun generateToken(user: User, expiresIn: Long) = Token(
         user.id!!,
         Instant.now().plus(Duration.ofSeconds(expiresIn)),
-        scopeFetchExecutor.execute(user)
+        scopeFetchExecutor.execute(user, 0)
     )
 
     @Cacheable("TokenManager.encode(Token)")

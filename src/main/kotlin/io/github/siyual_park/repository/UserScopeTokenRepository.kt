@@ -19,4 +19,10 @@ class UserScopeTokenRepository(
 
     @Transactional
     fun findAllByUser(userId: String, lockMode: LockModeType? = null): List<UserScopeToken> = findAll({ withUser(userId) }, lockMode = lockMode)
+
+    @Transactional
+    fun deleteAllByUser(user: User): Unit = deleteAll { withUser(user) }
+
+    @Transactional
+    fun deleteAllByUser(userId: String): Unit = deleteAll { withUser(userId) }
 }
