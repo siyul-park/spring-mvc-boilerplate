@@ -1,5 +1,7 @@
 package io.github.siyual_park.confg
 
+import io.github.siyual_park.domain.security.AuthenticationFactoryManager
+import io.github.siyual_park.domain.security.BearerAuthenticationFactory
 import io.github.siyual_park.filter.AuthenticationFilter
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -11,8 +13,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig(
-    private val authenticationFilter: AuthenticationFilter
+    private val authenticationFilter: AuthenticationFilter,
+    authenticationFactoryManager: AuthenticationFactoryManager,
+    bearerAuthenticationFactory: BearerAuthenticationFactory
 ) : WebSecurityConfigurerAdapter() {
+
+    init {
+        authenticationFactoryManager.register(bearerAuthenticationFactory)
+    }
+
     override fun configure(http: HttpSecurity) {
         http.csrf().disable().authorizeRequests()
             .anyRequest().permitAll()
