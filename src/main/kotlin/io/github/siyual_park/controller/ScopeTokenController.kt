@@ -93,7 +93,7 @@ class ScopeTokenController(
 
     @DeleteMapping("/@{scope-token-name}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteByName(@PathVariable("scope-token-name") id: String) {
-        return scopeTokenDeleteExecutor.executeById(id)
+    fun deleteByName(@PathVariable("scope-token-name") name: String) {
+        return scopeTokenDeleteExecutor.executeByName(name)
     }
 }
