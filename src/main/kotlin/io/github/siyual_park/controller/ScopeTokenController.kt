@@ -4,6 +4,7 @@ import io.github.siyual_park.domain.Paginator
 import io.github.siyual_park.domain.scope.ScopeFetchExecutor
 import io.github.siyual_park.domain.scope.ScopeResponsePayloadMapper
 import io.github.siyual_park.domain.scope.ScopeTokenCreatePayloadMapper
+import io.github.siyual_park.domain.scope.ScopeTokenDeleteExecutor
 import io.github.siyual_park.model.scope.ScopeToken
 import io.github.siyual_park.model.scope.ScopeTokenCreatePayload
 import io.github.siyual_park.model.scope.ScopeTokenRelation
@@ -15,6 +16,7 @@ import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -33,6 +35,7 @@ class ScopeTokenController(
     private val scopeTokenRelationRepository: ScopeTokenRelationRepository,
     private val userScopeTokenRepository: UserScopeTokenRepository,
     private val scopeFetchExecutor: ScopeFetchExecutor,
+    private val scopeTokenDeleteExecutor: ScopeTokenDeleteExecutor,
     private val scopeResponsePayloadMapper: ScopeResponsePayloadMapper,
     private val scopeTokenCreatePayloadMapper: ScopeTokenCreatePayloadMapper,
 
@@ -85,5 +88,17 @@ class ScopeTokenController(
     fun findByName(@PathVariable("scope-token-name") name: String): ScopeTokenResponsePayload {
         return scopeTokenRepository.findByNameOrFail(name)
             .let { scopeResponsePayloadMapper.map(it) }
+    }
+
+    @DeleteMapping("/{scope-token-id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteById(@PathVariable("scope-token-id") id: String) {
+        return scopeTokenDeleteExecutor.executeById(id)
+    }
+
+    @DeleteMapping("/{scope-token-name}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteByName(@PathVariable("scope-token-name") id: String) {
+        return scopeTokenDeleteExecutor.executeById(id)
     }
 }

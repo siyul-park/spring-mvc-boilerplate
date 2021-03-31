@@ -15,8 +15,20 @@ class ScopeTokenRelationRepository(
     entityManager: EntityManager
 ) : CustomRepository<ScopeTokenRelation, String, ScopeTokenRelationSpecification> by SimpleCustomRepository.of(entityManager, ScopeTokenRelationSpecification) {
     @Transactional
-    fun findAllByParent(parent: ScopeToken, lockMode: LockModeType? = null): List<ScopeTokenRelation> = findAll({ withParent(parent) }, lockMode = lockMode)
+    fun deleteAllByChild(child: ScopeToken) = deleteAll { withChild(child) }
 
     @Transactional
-    fun findAllByParent(parentId: String, lockMode: LockModeType? = null): List<ScopeTokenRelation> = findAll({ withParent(parentId) }, lockMode = lockMode)
+    fun deleteAllByChild(childId: String) = deleteAll { withChild(childId) }
+
+    @Transactional
+    fun deleteAllByParent(parent: ScopeToken) = deleteAll { withParent(parent) }
+
+    @Transactional
+    fun deleteAllByParent(parentId: String) = deleteAll { withParent(parentId) }
+
+    @Transactional
+    fun findAllByParent(parent: ScopeToken, lockMode: LockModeType? = null) = findAll({ withParent(parent) }, lockMode = lockMode)
+
+    @Transactional
+    fun findAllByParent(parentId: String, lockMode: LockModeType? = null) = findAll({ withParent(parentId) }, lockMode = lockMode)
 }
