@@ -18,7 +18,7 @@ import springfox.documentation.spring.web.plugins.Docket
 import java.time.Instant
 
 @Configuration
-class SpringFoxConfig {
+class SpringFoxConfiguration {
     @Bean
     fun api(): Docket {
         return Docket(DocumentationType.SWAGGER_2).apply {

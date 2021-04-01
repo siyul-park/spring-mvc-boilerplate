@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig(
+class WebSecurityConfiguration(
     private val authenticationFilter: AuthenticationFilter,
     private val authenticationFactoryManager: AuthenticationFactoryManager,
     private val bearerAuthenticationFactory: BearerAuthenticationFactory
