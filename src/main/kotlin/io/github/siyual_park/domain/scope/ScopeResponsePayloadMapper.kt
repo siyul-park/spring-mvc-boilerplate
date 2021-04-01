@@ -1,6 +1,6 @@
 package io.github.siyual_park.domain.scope
 
-import io.github.siyual_park.model.Mapper
+import io.github.siyual_park.domain.Mapper
 import io.github.siyual_park.model.scope.ScopeToken
 import io.github.siyual_park.model.scope.ScopeTokenResponsePayload
 import org.springframework.stereotype.Component

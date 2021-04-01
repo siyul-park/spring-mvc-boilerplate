@@ -8,7 +8,7 @@ import io.github.siyual_park.domain.user.UserPatchFactory
 import io.github.siyual_park.domain.user.UserResponsePayloadMapper
 import io.github.siyual_park.exception.AccessDeniedException
 import io.github.siyual_park.expansion.has
-import io.github.siyual_park.model.JsonView
+import io.github.siyual_park.model.jsonView.JsonView
 import io.github.siyual_park.model.token.TokenAuthentication
 import io.github.siyual_park.model.user.User
 import io.github.siyual_park.model.user.UserCreatePayload

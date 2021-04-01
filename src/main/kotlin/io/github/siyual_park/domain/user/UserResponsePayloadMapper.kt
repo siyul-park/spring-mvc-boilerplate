@@ -1,7 +1,7 @@
 package io.github.siyual_park.domain.user
 
+import io.github.siyual_park.domain.Mapper
 import io.github.siyual_park.domain.scope.ScopeFetchExecutor
-import io.github.siyual_park.model.Mapper
 import io.github.siyual_park.model.scope.normalize
 import io.github.siyual_park.model.user.User
 import io.github.siyual_park.model.user.UserResponsePayload

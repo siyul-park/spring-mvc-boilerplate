@@ -1,4 +1,4 @@
-package io.github.siyual_park.model
+package io.github.siyual_park.model.jsonView
 
 import kotlin.reflect.KClass
 

@@ -1,6 +1,6 @@
 package io.github.siyual_park.config
 
-import io.github.siyual_park.model.JsonView
+import io.github.siyual_park.model.jsonView.JsonView
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import org.springframework.context.annotation.Bean
