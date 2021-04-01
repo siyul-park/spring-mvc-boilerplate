@@ -1,6 +1,7 @@
 package io.github.siyual_park.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.siyual_park.domain.user.UserCreateExecutor
 import io.github.siyual_park.domain.user.UserCreatePayloadMapper
 import io.github.siyual_park.expansion.authorization
 import io.github.siyual_park.expansion.json
@@ -28,6 +29,7 @@ class UserControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
     private val userRepository: UserRepository,
+    private val userCreateExecutor: UserCreateExecutor,
     private val userCreatePayloadMapper: UserCreatePayloadMapper,
     private val authorizationFactory: AuthorizationFactory
 ) {
@@ -55,7 +57,7 @@ class UserControllerTest @Autowired constructor(
     fun testUpdate() {
         val created = userCreatePayloadMockFactory.create()
             .let { userCreatePayloadMapper.map(it) }
-            .let { userRepository.create(it) }
+            .let { userCreateExecutor.execute(it) }
 
         val payload = UserUpdatePayload(
             nickname = Optional.of(RandomFactory.createString(10))
@@ -80,7 +82,7 @@ class UserControllerTest @Autowired constructor(
     fun testFindById() {
         val created = userCreatePayloadMockFactory.create()
             .let { userCreatePayloadMapper.map(it) }
-            .let { userRepository.create(it) }
+            .let { userCreateExecutor.execute(it) }
 
         val result = mockMvc.get("/users/${created.id}") {
             authorization(authorizationFactory.create(created))
@@ -101,7 +103,7 @@ class UserControllerTest @Autowired constructor(
     fun testFindByName() {
         val created = userCreatePayloadMockFactory.create()
             .let { userCreatePayloadMapper.map(it) }
-            .let { userRepository.create(it) }
+            .let { userCreateExecutor.execute(it) }
 
         val result = mockMvc.get("/users/@${created.name}") {
             authorization(authorizationFactory.create(created))
@@ -122,7 +124,7 @@ class UserControllerTest @Autowired constructor(
     fun testDelete() {
         val created = userCreatePayloadMockFactory.create()
             .let { userCreatePayloadMapper.map(it) }
-            .let { userRepository.create(it) }
+            .let { userCreateExecutor.execute(it) }
 
         mockMvc.delete("/users/${created.id}") {
             authorization(authorizationFactory.create(created))
