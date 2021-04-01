@@ -44,7 +44,7 @@ class TokenController(
 
         val scope = scopeFetchExecutor.execute(user).also {
             if (!it.has(PreDefinedScope.accessToken.create)) {
-                throw AccessDeniedException("Not have ${PreDefinedScope.accessToken.create} scope")
+                throw AccessDeniedException()
             }
         }
             .filter { it.name != PreDefinedScope.accessToken.create }
