@@ -1,5 +1,6 @@
 package io.github.siyual_park.config
 
+import io.github.siyual_park.model.JsonView
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import org.springframework.context.annotation.Bean
@@ -24,6 +25,7 @@ class SpringFoxConfiguration {
         return Docket(DocumentationType.SWAGGER_2).apply {
             directModelSubstitute(Instant::class.java, Long::class.java)
             directModelSubstitute(MimeType::class.java, String::class.java)
+            genericModelSubstitutes(JsonView::class.java)
         }
             .select()
             .apis(
