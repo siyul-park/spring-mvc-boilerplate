@@ -12,7 +12,12 @@ class ScopeConfiguration(
     private val scopeProperty: ScopeProperty
 ) {
     @PostConstruct
-    fun prepare() {
-        val default = scopePrepareManager.required(ScopeToken(scopeProperty.default, "Default user scope"))
+    fun prepare() = with(scopePrepareManager) {
+        val default = required(ScopeToken(scopeProperty.default))
+        val accessTokenCreateScope = required(ScopeToken("create:access-token"))
+
+        default.also {
+            relation(it, accessTokenCreateScope)
+        }
     }
 }
