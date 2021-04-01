@@ -50,7 +50,7 @@ class UserController(
             .let { JsonView.of(it, UserResponsePayload.Private::class) }
     }
 
-    @PreAuthorize("hasAuthority(${PreDefinedScope.User.update})")
+    @PreAuthorize("hasAuthority('${PreDefinedScope.User.update}')")
     @PatchMapping("/{user-id}")
     @ResponseStatus(HttpStatus.OK)
     fun update(
@@ -70,7 +70,7 @@ class UserController(
             .let { JsonView.of(it, UserResponsePayload.Private::class) }
     }
 
-    @PreAuthorize("hasAuthority(${PreDefinedScope.User.read})")
+    @PreAuthorize("hasAuthority('${PreDefinedScope.User.read}')")
     @GetMapping("/{user-id}")
     @ResponseStatus(HttpStatus.OK)
     fun findById(
@@ -88,7 +88,7 @@ class UserController(
             .let { JsonView.of(it, view) }
     }
 
-    @PreAuthorize("hasAuthority(${PreDefinedScope.User.read})")
+    @PreAuthorize("hasAuthority('${PreDefinedScope.User.read}')")
     @GetMapping("/@{user-name}")
     @ResponseStatus(HttpStatus.OK)
     fun findByName(
@@ -106,7 +106,7 @@ class UserController(
             .let { JsonView.of(it, view) }
     }
 
-    @PreAuthorize("hasAuthority(${PreDefinedScope.User.delete})")
+    @PreAuthorize("hasAuthority('${PreDefinedScope.User.delete}')")
     @DeleteMapping("/{user-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(
