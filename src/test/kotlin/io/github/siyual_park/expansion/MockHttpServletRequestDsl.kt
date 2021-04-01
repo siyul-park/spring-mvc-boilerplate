@@ -7,3 +7,7 @@ fun MockHttpServletRequestDsl.json(value: String) {
     contentType = MediaType.APPLICATION_JSON
     content = value
 }
+
+fun MockHttpServletRequestDsl.authorization(value: String) {
+    header("Authorization", value)
+}

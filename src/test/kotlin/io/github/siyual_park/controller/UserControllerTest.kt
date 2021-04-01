@@ -2,8 +2,10 @@ package io.github.siyual_park.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.siyual_park.domain.user.UserCreatePayloadMapper
+import io.github.siyual_park.expansion.authorization
 import io.github.siyual_park.expansion.json
 import io.github.siyual_park.expansion.readValue
+import io.github.siyual_park.factory.AuthorizationFactory
 import io.github.siyual_park.factory.RandomFactory
 import io.github.siyual_park.factory.UserCreatePayloadMockFactory
 import io.github.siyual_park.model.user.UserResponsePayload
@@ -26,7 +28,8 @@ class UserControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
     private val userRepository: UserRepository,
-    private val userCreatePayloadMapper: UserCreatePayloadMapper
+    private val userCreatePayloadMapper: UserCreatePayloadMapper,
+    private val authorizationFactory: AuthorizationFactory
 ) {
 
     private val userCreatePayloadMockFactory = UserCreatePayloadMockFactory()
@@ -57,7 +60,10 @@ class UserControllerTest @Autowired constructor(
         val payload = UserUpdatePayload(
             nickname = Optional.of(RandomFactory.createString(10))
         )
-        val result = mockMvc.patch("/users/${created.id}") { json(objectMapper.writeValueAsString(payload)) }
+        val result = mockMvc.patch("/users/${created.id}") {
+            authorization(authorizationFactory.create(created))
+            json(objectMapper.writeValueAsString(payload))
+        }
             .andExpect { status { isOk() } }
             .andReturn()
 
@@ -76,7 +82,9 @@ class UserControllerTest @Autowired constructor(
             .let { userCreatePayloadMapper.map(it) }
             .let { userRepository.create(it) }
 
-        val result = mockMvc.get("/users/${created.id}")
+        val result = mockMvc.get("/users/${created.id}") {
+            authorization(authorizationFactory.create(created))
+        }
             .andExpect { status { isOk() } }
             .andReturn()
 
@@ -95,7 +103,9 @@ class UserControllerTest @Autowired constructor(
             .let { userCreatePayloadMapper.map(it) }
             .let { userRepository.create(it) }
 
-        val result = mockMvc.get("/users/@${created.name}")
+        val result = mockMvc.get("/users/@${created.name}") {
+            authorization(authorizationFactory.create(created))
+        }
             .andExpect { status { isOk() } }
             .andReturn()
 
@@ -114,7 +124,9 @@ class UserControllerTest @Autowired constructor(
             .let { userCreatePayloadMapper.map(it) }
             .let { userRepository.create(it) }
 
-        mockMvc.delete("/users/${created.id}")
+        mockMvc.delete("/users/${created.id}") {
+            authorization(authorizationFactory.create(created))
+        }
             .andExpect { status { isNoContent() } }
             .andReturn()
 
