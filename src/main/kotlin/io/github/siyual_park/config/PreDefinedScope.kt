@@ -6,6 +6,10 @@ object PreDefinedScope {
     }
 
     object User {
+        const val read = "read:user"
+        const val update = "update:user"
+        const val delete = "delete:user"
+
         object Scope {
             const val update = "update:user.scope"
         }
