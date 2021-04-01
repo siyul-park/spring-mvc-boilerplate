@@ -4,6 +4,7 @@ import io.github.siyual_park.model.scope.ScopeToken
 import io.github.siyual_park.model.scope.ScopeTokenRelation
 import io.github.siyual_park.repository.base.CustomRepository
 import io.github.siyual_park.repository.base.SimpleCustomRepository
+import io.github.siyual_park.repository.expansion.and
 import io.github.siyual_park.repository.specification.ScopeTokenRelationSpecification
 import org.springframework.stereotype.Component
 import javax.persistence.EntityManager
@@ -25,6 +26,10 @@ class ScopeTokenRelationRepository(
 
     @Transactional
     fun deleteAllByParent(parentId: String) = deleteAll { withParent(parentId) }
+
+    @Transactional
+    fun findByParentAndChild(parent: ScopeToken, child: ScopeToken, lockMode: LockModeType? = null) =
+        find({ withParent(parent) and withChild(child) }, lockMode = lockMode)
 
     @Transactional
     fun findAllByChild(child: ScopeToken, lockMode: LockModeType? = null) = findAll({ withChild(child) }, lockMode = lockMode)
