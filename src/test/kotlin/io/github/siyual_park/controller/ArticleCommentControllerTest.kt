@@ -2,11 +2,15 @@ package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.domain.comment.CommentCreatePayloadMapper
+import io.github.siyual_park.domain.user.UserCreateExecutor
+import io.github.siyual_park.domain.user.UserCreatePayloadMapper
 import io.github.siyual_park.factory.ArticleCreatePayloadMockFactory
 import io.github.siyual_park.factory.CommentCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
+import io.github.siyual_park.factory.UserCreatePayloadMockFactory
 import io.github.siyual_park.model.article.Article
 import io.github.siyual_park.model.category.Category
+import io.github.siyual_park.model.user.User
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.CommentRepository
@@ -23,10 +27,14 @@ class ArticleCommentControllerTest @Autowired constructor(
     private val commentRepository: CommentRepository,
     private val articleRepository: ArticleRepository,
     private val categoryRepository: CategoryRepository,
+    private val userCreateExecutor: UserCreateExecutor,
     private val commentCreatePayloadMapper: CommentCreatePayloadMapper,
-    private val articleCreatePayloadMapper: ArticleCreatePayloadMapper
+    private val articleCreatePayloadMapper: ArticleCreatePayloadMapper,
+    private val userCreatePayloadMapper: UserCreatePayloadMapper,
+    private val userCreatePayloadMockFactory: UserCreatePayloadMockFactory
 ) {
 
+    private lateinit var user: User
     private lateinit var category: Category
     private lateinit var article: Article
     private lateinit var articleCreatePayloadMockFactory: ArticleCreatePayloadMockFactory
@@ -34,7 +42,11 @@ class ArticleCommentControllerTest @Autowired constructor(
 
     @BeforeEach
     fun prepare() {
-        category = categoryRepository.create(Category(RandomFactory.createString(10)))
+        user = userCreatePayloadMockFactory.create()
+            .let { userCreatePayloadMapper.map(it) }
+            .let { userCreateExecutor.execute(it) }
+
+        category = categoryRepository.create(Category(RandomFactory.createString(10), user))
         articleCreatePayloadMockFactory = ArticleCreatePayloadMockFactory(category)
 
         article = articleCreatePayloadMockFactory.create()
