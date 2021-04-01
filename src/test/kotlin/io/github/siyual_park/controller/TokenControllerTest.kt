@@ -2,11 +2,11 @@ package io.github.siyual_park.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.siyual_park.domain.security.TokenExchanger
+import io.github.siyual_park.domain.user.UserCreateExecutor
 import io.github.siyual_park.domain.user.UserCreatePayloadMapper
 import io.github.siyual_park.expansion.readValue
 import io.github.siyual_park.factory.UserCreatePayloadMockFactory
 import io.github.siyual_park.model.token.TokenResponsePayload
-import io.github.siyual_park.repository.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.post
 class TokenControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
-    private val userRepository: UserRepository,
+    private val userCreateExecutor: UserCreateExecutor,
     private val userCreatePayloadMapper: UserCreatePayloadMapper,
     private val tokenExchanger: TokenExchanger
 ) {
@@ -29,7 +29,7 @@ class TokenControllerTest @Autowired constructor(
     fun testCreate() {
         val createUserPayload = userCreatePayloadMockFactory.create()
         val user = userCreatePayloadMapper.map(createUserPayload)
-            .let { userRepository.create(it) }
+            .let { userCreateExecutor.execute(it) }
 
         val result = mockMvc.post("/token") {
             contentType = MediaType.APPLICATION_FORM_URLENCODED

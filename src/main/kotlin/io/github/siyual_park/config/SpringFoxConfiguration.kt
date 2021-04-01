@@ -1,4 +1,4 @@
-package io.github.siyual_park.confg
+package io.github.siyual_park.config
 
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
@@ -18,7 +18,7 @@ import springfox.documentation.spring.web.plugins.Docket
 import java.time.Instant
 
 @Configuration
-class SpringFoxConfig {
+class SpringFoxConfiguration {
     @Bean
     fun api(): Docket {
         return Docket(DocumentationType.SWAGGER_2).apply {

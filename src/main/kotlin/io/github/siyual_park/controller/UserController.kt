@@ -1,5 +1,6 @@
 package io.github.siyual_park.controller
 
+import io.github.siyual_park.domain.user.UserCreateExecutor
 import io.github.siyual_park.domain.user.UserCreatePayloadMapper
 import io.github.siyual_park.domain.user.UserDeleteExecutor
 import io.github.siyual_park.domain.user.UserPatchFactory
@@ -27,6 +28,7 @@ class UserController(
     private val userRepository: UserRepository,
     private val userCreatePayloadMapper: UserCreatePayloadMapper,
     private val userResponsePayloadMapper: UserResponsePayloadMapper,
+    private val userCreateExecutor: UserCreateExecutor,
     private val userDeleteExecutor: UserDeleteExecutor,
     private val userPatchFactory: UserPatchFactory
 ) {
@@ -34,7 +36,7 @@ class UserController(
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody payload: UserCreatePayload): UserResponsePayload {
-        return userRepository.create(userCreatePayloadMapper.map(payload))
+        return userCreateExecutor.execute(userCreatePayloadMapper.map(payload))
             .let { userResponsePayloadMapper.map(it) }
     }
 

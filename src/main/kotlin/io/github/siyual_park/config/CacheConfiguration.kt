@@ -1,4 +1,4 @@
-package io.github.siyual_park.confg
+package io.github.siyual_park.config
 
 import com.google.common.cache.CacheBuilder
 import org.springframework.cache.Cache
