@@ -1,26 +1,24 @@
 package io.github.siyual_park.model.user
 
 import com.fasterxml.jackson.annotation.JsonView
+import io.github.siyual_park.model.View
 import java.time.Instant
 
 data class UserResponsePayload(
-    @JsonView(Public::class)
+    @JsonView(View.Public::class)
     var id: String,
 
-    @JsonView(Public::class)
+    @JsonView(View.Public::class)
     var name: String,
 
-    @JsonView(Public::class)
+    @JsonView(View.Public::class)
     var nickname: String,
 
-    @JsonView(Private::class)
-    val scope: String,
+    @JsonView(View.Private::class)
+    val scope: String?,
 
-    @JsonView(Public::class)
+    @JsonView(View.Public::class)
     val createdAt: Instant,
-    @JsonView(Public::class)
+    @JsonView(View.Public::class)
     val updatedAt: Instant?
-) {
-    interface Public
-    interface Private : Public
-}
+)

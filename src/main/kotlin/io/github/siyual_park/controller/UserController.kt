@@ -1,6 +1,7 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.config.PreDefinedScope
+import io.github.siyual_park.domain.scope.ScopeFetchExecutor
 import io.github.siyual_park.domain.user.UserCreateExecutor
 import io.github.siyual_park.domain.user.UserCreatePayloadMapper
 import io.github.siyual_park.domain.user.UserDeleteExecutor
@@ -8,6 +9,7 @@ import io.github.siyual_park.domain.user.UserPatchFactory
 import io.github.siyual_park.domain.user.UserResponsePayloadMapper
 import io.github.siyual_park.exception.AccessDeniedException
 import io.github.siyual_park.expansion.has
+import io.github.siyual_park.model.View
 import io.github.siyual_park.model.jsonView.JsonView
 import io.github.siyual_park.model.token.TokenAuthentication
 import io.github.siyual_park.model.user.User
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import springfox.documentation.annotations.ApiIgnore
+import kotlin.reflect.KClass
 
 @Api
 @RestController
@@ -36,18 +39,21 @@ import springfox.documentation.annotations.ApiIgnore
 class UserController(
     private val userRepository: UserRepository,
     private val userCreatePayloadMapper: UserCreatePayloadMapper,
-    private val userResponsePayloadMapper: UserResponsePayloadMapper,
+    scopeFetchExecutor: ScopeFetchExecutor,
     private val userCreateExecutor: UserCreateExecutor,
     private val userDeleteExecutor: UserDeleteExecutor,
     private val userPatchFactory: UserPatchFactory
 ) {
 
+    private val scopeFetchUserResponsePayloadMapper = UserResponsePayloadMapper(scopeFetchExecutor, true)
+    private val scopeNotFetchUserResponsePayloadMapper = UserResponsePayloadMapper(scopeFetchExecutor, false)
+
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody payload: UserCreatePayload): JsonView<UserResponsePayload> {
         return userCreateExecutor.execute(userCreatePayloadMapper.map(payload))
-            .let { userResponsePayloadMapper.map(it) }
-            .let { JsonView.of(it, UserResponsePayload.Private::class) }
+            .let { findUserResponsePayloadMapper(View.Private::class).map(it) }
+            .let { JsonView.of(it, View.Private::class) }
     }
 
     @PreAuthorize("hasAuthority('${PreDefinedScope.User.update}')")
@@ -66,8 +72,8 @@ class UserController(
         }
 
         return userRepository.updateById(id, userPatchFactory.create(payload))
-            .let { userResponsePayloadMapper.map(it) }
-            .let { JsonView.of(it, UserResponsePayload.Private::class) }
+            .let { findUserResponsePayloadMapper(View.Private::class).map(it) }
+            .let { JsonView.of(it, View.Private::class) }
     }
 
     @PreAuthorize("hasAuthority('${PreDefinedScope.User.read}')")
@@ -78,13 +84,13 @@ class UserController(
         @PathVariable("user-id") id: String
     ): JsonView<UserResponsePayload> {
         val view = if (user.id == id) {
-            UserResponsePayload.Private::class
+            View.Private::class
         } else {
-            UserResponsePayload.Public::class
+            View.Public::class
         }
 
         return userRepository.findByIdOrFail(id)
-            .let { userResponsePayloadMapper.map(it) }
+            .let { findUserResponsePayloadMapper(view).map(it) }
             .let { JsonView.of(it, view) }
     }
 
@@ -96,13 +102,13 @@ class UserController(
         @PathVariable("user-name") name: String
     ): JsonView<UserResponsePayload> {
         val view = if (user.name == name) {
-            UserResponsePayload.Private::class
+            View.Private::class
         } else {
-            UserResponsePayload.Public::class
+            View.Public::class
         }
 
         return userRepository.findByNameOrFail(name)
-            .let { userResponsePayloadMapper.map(it) }
+            .let { findUserResponsePayloadMapper(view).map(it) }
             .let { JsonView.of(it, view) }
     }
 
@@ -117,5 +123,13 @@ class UserController(
             throw AccessDeniedException()
         }
         return userDeleteExecutor.execute(id)
+    }
+
+    private fun findUserResponsePayloadMapper(clazz: KClass<*>): UserResponsePayloadMapper {
+        return if (clazz == View.Public::class) {
+            scopeNotFetchUserResponsePayloadMapper
+        } else {
+            scopeFetchUserResponsePayloadMapper
+        }
     }
 }

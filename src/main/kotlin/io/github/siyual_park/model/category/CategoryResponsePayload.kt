@@ -1,5 +1,6 @@
 package io.github.siyual_park.model.category
 
+import io.github.siyual_park.model.user.UserResponsePayload
 import java.time.Instant
 
 data class CategoryResponsePayload(
@@ -7,17 +8,8 @@ data class CategoryResponsePayload(
 
     var name: String,
 
+    var owner: UserResponsePayload,
+
     val createdAt: Instant,
     val updatedAt: Instant?
-) {
-    companion object {
-        fun from(category: Category) = with(category) {
-            CategoryResponsePayload(
-                id!!,
-                name,
-                createdAt!!,
-                updatedAt
-            )
-        }
-    }
-}
+)
