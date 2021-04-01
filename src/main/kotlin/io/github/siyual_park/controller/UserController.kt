@@ -1,7 +1,8 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.config.PreDefinedScope
-import io.github.siyual_park.domain.scope.ScopeFetchExecutor
+import io.github.siyual_park.domain.user.FetchScopeUserResponsePayloadMapper
+import io.github.siyual_park.domain.user.NotFetchScopeUserResponsePayloadMapper
 import io.github.siyual_park.domain.user.UserCreateExecutor
 import io.github.siyual_park.domain.user.UserCreatePayloadMapper
 import io.github.siyual_park.domain.user.UserDeleteExecutor
@@ -39,14 +40,12 @@ import kotlin.reflect.KClass
 class UserController(
     private val userRepository: UserRepository,
     private val userCreatePayloadMapper: UserCreatePayloadMapper,
-    scopeFetchExecutor: ScopeFetchExecutor,
+    private val fetchScopeUserResponsePayloadMapper: FetchScopeUserResponsePayloadMapper,
+    private val notFetchScopeUserResponsePayloadMapper: NotFetchScopeUserResponsePayloadMapper,
     private val userCreateExecutor: UserCreateExecutor,
     private val userDeleteExecutor: UserDeleteExecutor,
     private val userPatchFactory: UserPatchFactory
 ) {
-
-    private val scopeFetchUserResponsePayloadMapper = UserResponsePayloadMapper(scopeFetchExecutor, true)
-    private val scopeNotFetchUserResponsePayloadMapper = UserResponsePayloadMapper(scopeFetchExecutor, false)
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
@@ -127,9 +126,9 @@ class UserController(
 
     private fun findUserResponsePayloadMapper(clazz: KClass<*>): UserResponsePayloadMapper {
         return if (clazz == View.Public::class) {
-            scopeNotFetchUserResponsePayloadMapper
+            notFetchScopeUserResponsePayloadMapper
         } else {
-            scopeFetchUserResponsePayloadMapper
+            fetchScopeUserResponsePayloadMapper
         }
     }
 }

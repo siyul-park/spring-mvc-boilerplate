@@ -1,17 +1,23 @@
 package io.github.siyual_park.controller
 
+import io.github.siyual_park.config.PreDefinedScope
 import io.github.siyual_park.domain.Paginator
 import io.github.siyual_park.domain.category.CategoryDeleteExecutor
 import io.github.siyual_park.domain.category.CategoryResponsePayloadMapper
+import io.github.siyual_park.exception.AccessDeniedException
 import io.github.siyual_park.model.article.ArticleUpdatePayload
+import io.github.siyual_park.model.category.Category
 import io.github.siyual_park.model.category.CategoryCreatePayload
 import io.github.siyual_park.model.category.CategoryResponsePayload
+import io.github.siyual_park.model.user.User
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.swagger.annotations.Api
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -23,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import java.util.stream.Stream
+import javax.persistence.LockModeType
 
 @Api
 @RestController
@@ -36,23 +43,34 @@ class CategoryController(
 
     private val paginator = Paginator.of(categoryRepository, categoryResponsePayloadMapper)
 
+    @PreAuthorize("hasAuthority('${PreDefinedScope.Category.create}')")
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody payload: CategoryCreatePayload): CategoryResponsePayload {
-        return categoryRepository.create(payload.toCategory())
+    fun create(
+        @AuthenticationPrincipal user: User,
+        @RequestBody payload: CategoryCreatePayload
+    ): CategoryResponsePayload {
+        return categoryRepository.create(Category(payload.name, user))
             .let { categoryResponsePayloadMapper.map(it) }
     }
 
+    @PreAuthorize("hasAuthority('${PreDefinedScope.Category.update}')")
     @PatchMapping("/{category-id}")
     @ResponseStatus(HttpStatus.OK)
     fun update(
+        @AuthenticationPrincipal user: User,
         @PathVariable("category-id") id: String,
         @RequestBody payload: ArticleUpdatePayload
     ): CategoryResponsePayload {
-        return categoryRepository.updateById(id, jsonMergePatchFactory.create(payload))
+        val category = categoryRepository.findByIdOrFail(id, LockModeType.PESSIMISTIC_WRITE)
+        if (category.owner.id != user.id) {
+            throw AccessDeniedException()
+        }
+        return categoryRepository.update(category, jsonMergePatchFactory.create(payload))
             .let { categoryResponsePayloadMapper.map(it) }
     }
 
+    @PreAuthorize("hasAuthority('${PreDefinedScope.Category.read}')")
     @GetMapping("")
     fun findAll(
         @RequestParam("page", required = false) offset: Int?,
@@ -70,6 +88,7 @@ class CategoryController(
         )
     }
 
+    @PreAuthorize("hasAuthority('${PreDefinedScope.Category.read}')")
     @GetMapping("/{category-id}")
     @ResponseStatus(HttpStatus.OK)
     fun findById(@PathVariable("category-id") id: String): CategoryResponsePayload {
@@ -77,6 +96,7 @@ class CategoryController(
             .let { categoryResponsePayloadMapper.map(it) }
     }
 
+    @PreAuthorize("hasAuthority('${PreDefinedScope.Category.read}')")
     @GetMapping("/@{category-name}")
     @ResponseStatus(HttpStatus.OK)
     fun findByName(@PathVariable("category-name") name: String): CategoryResponsePayload {
@@ -84,6 +104,7 @@ class CategoryController(
             .let { categoryResponsePayloadMapper.map(it) }
     }
 
+    @PreAuthorize("hasAuthority('${PreDefinedScope.Category.delete}')")
     @DeleteMapping("/{category-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable("category-id") id: String) {

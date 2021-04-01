@@ -14,4 +14,11 @@ object PreDefinedScope {
             const val update = "update:user.scope"
         }
     }
+
+    object Category {
+        const val create = "create:category"
+        const val read = "read:category"
+        const val update = "update:category"
+        const val delete = "delete:category"
+    }
 }
