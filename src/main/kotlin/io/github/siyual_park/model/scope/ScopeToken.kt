@@ -1,6 +1,7 @@
 package io.github.siyual_park.model.scope
 
 import io.github.siyual_park.model.BaseEntity
+import org.springframework.security.core.GrantedAuthority
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Index
@@ -17,4 +18,8 @@ data class ScopeToken(
     @Column(unique = true, nullable = false)
     var name: String,
     var description: String? = null
-) : BaseEntity()
+) : BaseEntity(), GrantedAuthority {
+    override fun getAuthority(): String {
+        return name
+    }
+}

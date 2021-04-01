@@ -42,6 +42,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
 
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -57,6 +59,8 @@ dependencies {
     implementation("com.google.guava:guava:$guava_version")
 
     implementation("io.jsonwebtoken:jjwt-api:$jjwt_version")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:$jjwt_version")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:$jjwt_version")
 
@@ -64,7 +68,9 @@ dependencies {
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.h2database:h2")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src/main")
