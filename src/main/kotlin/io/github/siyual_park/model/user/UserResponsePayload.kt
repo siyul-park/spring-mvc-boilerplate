@@ -8,18 +8,8 @@ data class UserResponsePayload(
     var name: String,
     var nickname: String,
 
+    val scope: String,
+
     val createdAt: Instant,
     val updatedAt: Instant?
-) {
-    companion object {
-        fun from(user: User) = with(user) {
-            UserResponsePayload(
-                id!!,
-                name,
-                nickname,
-                createdAt!!,
-                updatedAt
-            )
-        }
-    }
-}
+)

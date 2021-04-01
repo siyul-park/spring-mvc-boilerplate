@@ -1,6 +1,7 @@
 package io.github.siyual_park.domain.security
 
 import io.github.siyual_park.domain.scope.ScopeFetchExecutor
+import io.github.siyual_park.model.scope.normalize
 import io.github.siyual_park.model.token.Token
 import io.github.siyual_park.property.TokenProperty
 import io.jsonwebtoken.Claims
@@ -25,7 +26,7 @@ class TokenExchanger(
         return Jwts.builder()
             .claim("jti", token.id)
             .claim("sub", token.userId)
-            .claim("scope", token.scope.joinToString(" ") { it.name })
+            .claim("scope", token.scope.normalize())
             .setIssuedAt(Date.from(token.createdAt))
             .setExpiration(Date.from(token.expiredAt))
             .signWith(secretKey, SignatureAlgorithm.HS256)
