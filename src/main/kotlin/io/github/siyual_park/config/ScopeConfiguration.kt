@@ -23,12 +23,22 @@ class ScopeConfiguration(
 
         val userScopeUpdate = required(ScopeToken(PreDefinedScope.User.Scope.update))
 
+        val categoryCreate = required(ScopeToken(PreDefinedScope.Category.create))
+        val categoryRead = required(ScopeToken(PreDefinedScope.Category.read))
+        val categoryUpdate = required(ScopeToken(PreDefinedScope.Category.update))
+        val categoryDelete = required(ScopeToken(PreDefinedScope.Category.delete))
+
         default.also {
             relation(it, accessTokenCreate)
 
             relation(it, userRead)
             relation(it, userUpdate)
             relation(it, userDelete)
+
+            relation(it, categoryCreate)
+            relation(it, categoryRead)
+            relation(it, categoryUpdate)
+            relation(it, categoryDelete)
 
             relation(it, userScopeUpdate)
         }

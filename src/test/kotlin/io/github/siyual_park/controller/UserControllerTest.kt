@@ -28,13 +28,12 @@ import java.util.Optional
 class UserControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
+    private val authorizationFactory: AuthorizationFactory,
     private val userRepository: UserRepository,
     private val userCreateExecutor: UserCreateExecutor,
     private val userCreatePayloadMapper: UserCreatePayloadMapper,
-    private val authorizationFactory: AuthorizationFactory
+    private val userCreatePayloadMockFactory: UserCreatePayloadMockFactory
 ) {
-
-    private val userCreatePayloadMockFactory = UserCreatePayloadMockFactory()
 
     @Test
     fun testCreate() {

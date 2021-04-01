@@ -3,13 +3,19 @@ package io.github.siyual_park.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.siyual_park.domain.article.ArticleCreatePayloadMapper
 import io.github.siyual_park.domain.comment.CommentCreatePayloadMapper
+import io.github.siyual_park.domain.user.UserCreateExecutor
+import io.github.siyual_park.domain.user.UserCreatePayloadMapper
+import io.github.siyual_park.expansion.authorization
 import io.github.siyual_park.expansion.json
 import io.github.siyual_park.expansion.readValue
 import io.github.siyual_park.factory.ArticleCreatePayloadMockFactory
+import io.github.siyual_park.factory.AuthorizationFactory
 import io.github.siyual_park.factory.CategoryCreatePayloadMockFactory
 import io.github.siyual_park.factory.CommentCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
+import io.github.siyual_park.factory.UserCreatePayloadMockFactory
 import io.github.siyual_park.model.article.ArticleUpdatePayload
+import io.github.siyual_park.model.category.Category
 import io.github.siyual_park.model.category.CategoryResponsePayload
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
@@ -32,20 +38,31 @@ import kotlin.math.ceil
 class CategoryControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
+    private val authorizationFactory: AuthorizationFactory,
     private val categoryRepository: CategoryRepository,
     private val articleRepository: ArticleRepository,
     private val commentRepository: CommentRepository,
+    private val userCreateExecutor: UserCreateExecutor,
     private val articleCreatePayloadMapper: ArticleCreatePayloadMapper,
-    private val commentCreatePayloadMapper: CommentCreatePayloadMapper
+    private val commentCreatePayloadMapper: CommentCreatePayloadMapper,
+    private val userCreatePayloadMapper: UserCreatePayloadMapper,
+    private val userCreatePayloadMockFactory: UserCreatePayloadMockFactory
 ) {
 
     private val categoryCreatePayloadMockFactory = CategoryCreatePayloadMockFactory()
 
     @Test
     fun testCreate() {
+        val user = userCreatePayloadMockFactory.create()
+            .let { userCreatePayloadMapper.map(it) }
+            .let { userCreateExecutor.execute(it) }
+
         val payload = categoryCreatePayloadMockFactory.create()
 
-        val result = mockMvc.post("/categories") { json(objectMapper.writeValueAsString(payload)) }
+        val result = mockMvc.post("/categories") {
+            authorization(authorizationFactory.create(user))
+            json(objectMapper.writeValueAsString(payload))
+        }
             .andExpect { status { isCreated() } }
             .andReturn()
 
@@ -59,13 +76,20 @@ class CategoryControllerTest @Autowired constructor(
 
     @Test
     fun testUpdate() {
+        val user = userCreatePayloadMockFactory.create()
+            .let { userCreatePayloadMapper.map(it) }
+            .let { userCreateExecutor.execute(it) }
+
         val created = categoryCreatePayloadMockFactory.create()
-            .let { categoryRepository.create(it.toCategory()) }
+            .let { categoryRepository.create(Category(it.name, user)) }
 
         val titleUpdatePayload = ArticleUpdatePayload(
             title = Optional.of(RandomFactory.createString(10))
         )
-        val result = mockMvc.patch("/categories/${created.id}") { json(objectMapper.writeValueAsString(titleUpdatePayload)) }
+        val result = mockMvc.patch("/categories/${created.id}") {
+            authorization(authorizationFactory.create(user))
+            json(objectMapper.writeValueAsString(titleUpdatePayload))
+        }
             .andExpect { status { isOk() } }
             .andReturn()
 
@@ -79,10 +103,16 @@ class CategoryControllerTest @Autowired constructor(
 
     @Test
     fun testFindById() {
-        val created = categoryCreatePayloadMockFactory.create()
-            .let { categoryRepository.create(it.toCategory()) }
+        val user = userCreatePayloadMockFactory.create()
+            .let { userCreatePayloadMapper.map(it) }
+            .let { userCreateExecutor.execute(it) }
 
-        val result = mockMvc.get("/categories/${created.id}")
+        val created = categoryCreatePayloadMockFactory.create()
+            .let { categoryRepository.create(Category(it.name, user)) }
+
+        val result = mockMvc.get("/categories/${created.id}") {
+            authorization(authorizationFactory.create(user))
+        }
             .andExpect { status { isOk() } }
             .andReturn()
 
@@ -96,10 +126,16 @@ class CategoryControllerTest @Autowired constructor(
 
     @Test
     fun testFindByName() {
-        val created = categoryCreatePayloadMockFactory.create()
-            .let { categoryRepository.create(it.toCategory()) }
+        val user = userCreatePayloadMockFactory.create()
+            .let { userCreatePayloadMapper.map(it) }
+            .let { userCreateExecutor.execute(it) }
 
-        val result = mockMvc.get("/categories/@${created.name}")
+        val created = categoryCreatePayloadMockFactory.create()
+            .let { categoryRepository.create(Category(it.name, user)) }
+
+        val result = mockMvc.get("/categories/@${created.name}") {
+            authorization(authorizationFactory.create(user))
+        }
             .andExpect { status { isOk() } }
             .andReturn()
 
@@ -113,11 +149,17 @@ class CategoryControllerTest @Autowired constructor(
 
     @Test
     fun testFindAll() {
+        val user = userCreatePayloadMockFactory.create()
+            .let { userCreatePayloadMapper.map(it) }
+            .let { userCreateExecutor.execute(it) }
+
         categoryCreatePayloadMockFactory.create()
-            .let { categoryRepository.create(it.toCategory()) }
+            .let { categoryRepository.create(Category(it.name, user)) }
         val count = categoryRepository.count()
 
-        mockMvc.get("/categories")
+        mockMvc.get("/categories") {
+            authorization(authorizationFactory.create(user))
+        }
             .andExpect {
                 status { isOk() }
                 header {
@@ -130,8 +172,12 @@ class CategoryControllerTest @Autowired constructor(
 
     @Test
     fun testDelete() {
+        val user = userCreatePayloadMockFactory.create()
+            .let { userCreatePayloadMapper.map(it) }
+            .let { userCreateExecutor.execute(it) }
+
         val created = categoryCreatePayloadMockFactory.create()
-            .let { categoryRepository.create(it.toCategory()) }
+            .let { categoryRepository.create(Category(it.name, user)) }
 
         val articleCreatePayloadMockFactory = ArticleCreatePayloadMockFactory(created)
         val article = articleCreatePayloadMockFactory.create()
@@ -141,7 +187,9 @@ class CategoryControllerTest @Autowired constructor(
         val comment = commentCreatePayloadMockFactory.create()
             .let { commentRepository.create(commentCreatePayloadMapper.map(it)) }
 
-        mockMvc.delete("/categories/${created.id}")
+        mockMvc.delete("/categories/${created.id}") {
+            authorization(authorizationFactory.create(user))
+        }
             .andExpect { status { isNoContent() } }
             .andReturn()
 

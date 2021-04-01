@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import springfox.documentation.annotations.ApiIgnore
+import javax.transaction.Transactional
 import kotlin.reflect.KClass
 
 @Api
@@ -55,6 +56,7 @@ class UserController(
             .let { JsonView.of(it, View.Private::class) }
     }
 
+    @Transactional
     @PreAuthorize("hasAuthority('${PreDefinedScope.User.update}')")
     @PatchMapping("/{user-id}")
     @ResponseStatus(HttpStatus.OK)

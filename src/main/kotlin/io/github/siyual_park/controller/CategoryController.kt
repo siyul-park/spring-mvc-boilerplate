@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import java.util.stream.Stream
 import javax.persistence.LockModeType
+import javax.transaction.Transactional
 
 @Api
 @RestController
@@ -54,6 +55,7 @@ class CategoryController(
             .let { categoryResponsePayloadMapper.map(it) }
     }
 
+    @Transactional
     @PreAuthorize("hasAuthority('${PreDefinedScope.Category.update}')")
     @PatchMapping("/{category-id}")
     @ResponseStatus(HttpStatus.OK)
@@ -104,10 +106,18 @@ class CategoryController(
             .let { categoryResponsePayloadMapper.map(it) }
     }
 
+    @Transactional
     @PreAuthorize("hasAuthority('${PreDefinedScope.Category.delete}')")
     @DeleteMapping("/{category-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable("category-id") id: String) {
-        categoryDeleteExecutor.execute(id)
+    fun delete(
+        @AuthenticationPrincipal user: User,
+        @PathVariable("category-id") id: String
+    ) {
+        val category = categoryRepository.findByIdOrFail(id, LockModeType.PESSIMISTIC_WRITE)
+        if (category.owner.id != user.id) {
+            throw AccessDeniedException()
+        }
+        categoryDeleteExecutor.execute(category)
     }
 }
