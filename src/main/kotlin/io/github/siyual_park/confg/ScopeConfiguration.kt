@@ -14,7 +14,7 @@ class ScopeConfiguration(
     @PostConstruct
     fun prepare() = with(scopePrepareManager) {
         val default = required(ScopeToken(scopeProperty.default))
-        val accessTokenCreateScope = required(ScopeToken("create:access-token"))
+        val accessTokenCreateScope = required(ScopeToken(PreDefinedScope.accessToken.create))
 
         default.also {
             relation(it, accessTokenCreateScope)
