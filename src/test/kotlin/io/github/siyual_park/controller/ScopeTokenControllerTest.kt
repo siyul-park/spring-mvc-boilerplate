@@ -45,7 +45,7 @@ class ScopeTokenControllerTest @Autowired constructor(
         assertNotNull(response.id)
         assertEquals(response.name, payload.name)
         assertEquals(response.description, payload.description)
-        assertTrue(response.children?.isEmpty() == true)
+        assertTrue(response.children?.isEmpty() == false)
         assertNotNull(response.createdAt)
         assertNotNull(response.updatedAt)
     }
@@ -88,7 +88,7 @@ class ScopeTokenControllerTest @Autowired constructor(
         assertEquals(response.id, created.id)
         assertEquals(response.name, created.name)
         assertEquals(response.description, created.description)
-        assertTrue(response.children?.isEmpty() == true)
+        assertTrue(response.children?.isEmpty() == false)
         assertEquals(response.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
         assertEquals(response.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
     }
@@ -108,7 +108,7 @@ class ScopeTokenControllerTest @Autowired constructor(
         assertEquals(response.id, created.id)
         assertEquals(response.name, created.name)
         assertEquals(response.description, created.description)
-        assertTrue(response.children?.isEmpty() == true)
+        assertTrue(response.children?.isEmpty() == false)
         assertEquals(response.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
         assertEquals(response.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
     }
