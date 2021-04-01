@@ -4,23 +4,23 @@ import com.fasterxml.jackson.annotation.JsonView
 import java.time.Instant
 
 data class UserResponsePayload(
-    @JsonView(IdScope::class)
+    @JsonView(Public::class)
     var id: String,
 
-    @JsonView(NameScope::class)
+    @JsonView(Public::class)
     var name: String,
 
-    @JsonView(NickNameScope::class)
+    @JsonView(Public::class)
     var nickname: String,
 
-    @JsonView(ScopeScope::class)
+    @JsonView(Private::class)
     val scope: String,
 
-    @JsonView(CreatedAtScope::class)
+    @JsonView(Public::class)
     val createdAt: Instant,
-    @JsonView(UpdatedAtScope::class)
+    @JsonView(Public::class)
     val updatedAt: Instant?
 ) {
-    interface Public : IdScope, NameScope, NickNameScope, CreatedAtScope, UpdatedAtScope
-    interface Private : Public, ScopeScope
+    interface Public
+    interface Private : Public
 }
