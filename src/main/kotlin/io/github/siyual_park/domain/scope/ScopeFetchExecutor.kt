@@ -1,5 +1,6 @@
 package io.github.siyual_park.domain.scope
 
+import io.github.siyual_park.model.scope.Scope
 import io.github.siyual_park.model.scope.ScopeToken
 import io.github.siyual_park.model.user.User
 import io.github.siyual_park.repository.ScopeTokenRelationRepository
@@ -17,7 +18,7 @@ class ScopeFetchExecutor(
 ) {
     @Transactional
     @Cacheable("ScopeFetchExecutor.execute(User)")
-    fun execute(user: User, depth: Int? = null): Set<ScopeToken> {
+    fun execute(user: User, depth: Int? = null): Scope {
         return userScopeTokenRepository.findAllByUser(user)
             .map { it.scopeToken }
             .map { execute(it, depth) }
@@ -28,7 +29,7 @@ class ScopeFetchExecutor(
 
     @Transactional
     @Cacheable("ScopeFetchExecutor.execute(String)")
-    fun execute(scope: String, depth: Int? = null): Set<ScopeToken> {
+    fun execute(scope: String, depth: Int? = null): Scope {
         val names = scope.split(" ")
         return scopeTokenRepository.findAllByNameIn(names)
             .map { execute(it, depth) }
@@ -39,7 +40,7 @@ class ScopeFetchExecutor(
 
     @Transactional
     @Cacheable("ScopeFetchExecutor.execute(ScopeToken)")
-    fun execute(scopeToken: ScopeToken, depth: Int? = null): Set<ScopeToken> {
+    fun execute(scopeToken: ScopeToken, depth: Int? = null): Scope {
         if (depth == 0) {
             return setOf(scopeToken)
         }

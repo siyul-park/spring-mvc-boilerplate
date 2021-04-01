@@ -1,10 +1,14 @@
 package io.github.siyual_park.controller
 
+import io.github.siyual_park.domain.scope.ScopeFetchExecutor
 import io.github.siyual_park.domain.security.HashEncoder
 import io.github.siyual_park.domain.security.TokenExchanger
 import io.github.siyual_park.domain.security.TokenFactory
+import io.github.siyual_park.exception.AccessDeniedException
 import io.github.siyual_park.exception.UnauthorizedException
+import io.github.siyual_park.model.scope.has
 import io.github.siyual_park.model.token.TokenResponsePayload
+import io.github.siyual_park.model.user.User
 import io.github.siyual_park.property.TokenProperty
 import io.github.siyual_park.repository.UserRepository
 import io.swagger.annotations.Api
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/token")
 class TokenController(
     private val userRepository: UserRepository,
+    private val scopeFetchExecutor: ScopeFetchExecutor,
     private val tokenExchanger: TokenExchanger,
     private val tokenFactory: TokenFactory,
     private val tokenProperty: TokenProperty
@@ -30,12 +35,7 @@ class TokenController(
     @ResponseStatus(HttpStatus.OK)
     fun create(@RequestParam username: String, @RequestParam password: String): TokenResponsePayload {
         val user = userRepository.findByNameOrFail(username)
-
-        val hashedPassword = HashEncoder.encode(password, user.hashAlgorithm)
-            .let { HashEncoder.bytesToHex(it) }
-        if (user.password != hashedPassword) {
-            throw UnauthorizedException("Password incorrect")
-        }
+        validateCanCreate(user, password)
 
         val token = tokenFactory.create(user, tokenProperty.expiresIn)
         val accessToken = tokenExchanger.encode(token)
@@ -45,5 +45,18 @@ class TokenController(
             "bearer",
             tokenProperty.expiresIn
         )
+    }
+
+    private fun validateCanCreate(user: User, password: String) {
+        val hashedPassword = HashEncoder.encode(password, user.hashAlgorithm)
+            .let { HashEncoder.bytesToHex(it) }
+        if (user.password != hashedPassword) {
+            throw UnauthorizedException("Password incorrect")
+        }
+        scopeFetchExecutor.execute(user).let {
+            if (!it.has("create:access-token")) {
+                throw AccessDeniedException("Not have create:access-token scope")
+            }
+        }
     }
 }
