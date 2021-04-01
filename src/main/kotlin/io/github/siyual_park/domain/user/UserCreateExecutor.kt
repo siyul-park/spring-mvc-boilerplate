@@ -17,8 +17,8 @@ class UserCreateExecutor(
     private val scopeProperty: ScopeProperty
 ) {
     @Transactional
-    fun execute(user: User) = userRepository.create(user).also { created ->
-        scopeTokenRepository.findByName(scopeProperty.default)?.let {
+    fun execute(user: User, scopeName: String = scopeProperty.default) = userRepository.create(user).also { created ->
+        scopeTokenRepository.findByName(scopeName)?.let {
             userScopeTokenRepository.create(UserScopeToken(created, it))
         }
     }
