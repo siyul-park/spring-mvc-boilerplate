@@ -1,8 +1,8 @@
 package io.github.siyual_park.domain.security
 
-import io.github.siyual_park.confg.TokenProperty
 import io.github.siyual_park.domain.scope.ScopeFetchExecutor
 import io.github.siyual_park.model.token.Token
+import io.github.siyual_park.property.TokenProperty
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm

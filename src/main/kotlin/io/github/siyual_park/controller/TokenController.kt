@@ -1,11 +1,11 @@
 package io.github.siyual_park.controller
 
-import io.github.siyual_park.confg.TokenProperty
 import io.github.siyual_park.domain.security.HashEncoder
 import io.github.siyual_park.domain.security.TokenExchanger
 import io.github.siyual_park.domain.security.TokenFactory
 import io.github.siyual_park.exception.UnauthorizedException
 import io.github.siyual_park.model.token.TokenResponsePayload
+import io.github.siyual_park.property.TokenProperty
 import io.github.siyual_park.repository.UserRepository
 import io.swagger.annotations.Api
 import org.springframework.http.HttpStatus
