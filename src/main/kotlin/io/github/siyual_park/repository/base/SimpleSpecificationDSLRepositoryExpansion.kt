@@ -24,7 +24,7 @@ open class SimpleSpecificationDSLRepositoryExpansion<T : Any, ID, FACTORY>(
     }
 
     override fun find(spec: FACTORY.() -> Specification<T>, lockMode: LockModeType?): T? {
-        return repository.findOrFail(spec(factory), lockMode)
+        return repository.find(spec(factory), lockMode)
     }
 
     override fun findAll(spec: FACTORY.() -> Specification<T>, lockMode: LockModeType?, sort: Sort?): List<T> {
