@@ -54,7 +54,7 @@ class ScopeFetchExecutor(
 
         return children
             .map { execute(it, depth?.let { depth - 1 }) }
-            .fold(mutableSetOf(scopeToken)) { acc, set ->
+            .fold(mutableSetOf()) { acc, set ->
                 acc.apply { addAll(set) }
             }
     }

@@ -15,7 +15,6 @@ class ScopeResponsePayloadMapper(
             name,
             description,
             scopeFetchExecutor.execute(this, 1)
-                .filter { it != this }
                 .map { child ->
                     ScopeTokenResponsePayload(
                         child.id!!,

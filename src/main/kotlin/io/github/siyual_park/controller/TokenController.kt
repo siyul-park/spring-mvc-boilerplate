@@ -1,13 +1,9 @@
 package io.github.siyual_park.controller
 
-import io.github.siyual_park.confg.PreDefinedScope
-import io.github.siyual_park.domain.scope.ScopeFetchExecutor
 import io.github.siyual_park.domain.security.HashEncoder
 import io.github.siyual_park.domain.security.TokenExchanger
 import io.github.siyual_park.domain.security.TokenFactory
-import io.github.siyual_park.exception.AccessDeniedException
 import io.github.siyual_park.exception.UnauthorizedException
-import io.github.siyual_park.model.scope.has
 import io.github.siyual_park.model.token.TokenResponsePayload
 import io.github.siyual_park.property.TokenProperty
 import io.github.siyual_park.repository.UserRepository
@@ -25,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/token")
 class TokenController(
     private val userRepository: UserRepository,
-    private val scopeFetchExecutor: ScopeFetchExecutor,
     private val tokenExchanger: TokenExchanger,
     private val tokenFactory: TokenFactory,
     private val tokenProperty: TokenProperty
@@ -42,15 +37,7 @@ class TokenController(
             throw UnauthorizedException("Password incorrect")
         }
 
-        val scope = scopeFetchExecutor.execute(user).also {
-            if (!it.has(PreDefinedScope.accessToken.create)) {
-                throw AccessDeniedException()
-            }
-        }
-            .filter { it.name != PreDefinedScope.accessToken.create }
-            .toSet()
-
-        val token = tokenFactory.create(user, tokenProperty.expiresIn, scope = scope)
+        val token = tokenFactory.createAccessToken(user)
         val accessToken = tokenExchanger.encode(token)
 
         return TokenResponsePayload(
