@@ -1,4 +1,4 @@
-package io.github.siyual_park.confg
+package io.github.siyual_park.config
 
 import io.github.siyual_park.domain.scope.ScopePrepareManager
 import io.github.siyual_park.model.scope.ScopeToken
@@ -14,7 +14,7 @@ class ScopeConfiguration(
     @PostConstruct
     fun prepare() = with(scopePrepareManager) {
         val default = required(ScopeToken(scopeProperty.default))
-        val accessTokenCreateScope = required(ScopeToken(PreDefinedScope.accessToken.create))
+        val accessTokenCreateScope = required(ScopeToken(PreDefinedScope.AccessToken.create))
 
         default.also {
             relation(it, accessTokenCreateScope)

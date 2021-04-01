@@ -1,6 +1,6 @@
 package io.github.siyual_park.domain.security
 
-import io.github.siyual_park.confg.PreDefinedScope
+import io.github.siyual_park.config.PreDefinedScope
 import io.github.siyual_park.domain.scope.ScopeFetchExecutor
 import io.github.siyual_park.exception.AccessDeniedException
 import io.github.siyual_park.model.scope.Scope
@@ -19,11 +19,11 @@ class TokenFactory(
 ) {
     fun createAccessToken(user: User): Token {
         val scope = scopeFetchExecutor.execute(user).also {
-            if (!it.has(PreDefinedScope.accessToken.create)) {
+            if (!it.has(PreDefinedScope.AccessToken.create)) {
                 throw AccessDeniedException()
             }
         }
-            .filter { it.name != PreDefinedScope.accessToken.create }
+            .filter { it.name != PreDefinedScope.AccessToken.create }
             .toSet()
 
         return create(user, tokenProperty.expiresIn, scope = scope)

@@ -1,4 +1,4 @@
-package io.github.siyual_park.confg
+package io.github.siyual_park.config
 
 import io.github.siyual_park.domain.security.AuthenticationFactoryManager
 import io.github.siyual_park.domain.security.AuthenticationFilter

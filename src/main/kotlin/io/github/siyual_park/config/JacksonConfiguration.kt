@@ -1,4 +1,4 @@
-package io.github.siyual_park.confg
+package io.github.siyual_park.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
