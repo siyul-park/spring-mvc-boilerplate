@@ -9,8 +9,8 @@ import io.github.siyual_park.factory.ArticleCreatePayloadMockFactory
 import io.github.siyual_park.factory.CategoryCreatePayloadMockFactory
 import io.github.siyual_park.factory.CommentCreatePayloadMockFactory
 import io.github.siyual_park.factory.RandomFactory
-import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.model.category.CategoryResponsePayload
+import io.github.siyual_park.model.category.CategoryUpdatePayload
 import io.github.siyual_park.repository.ArticleRepository
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.CommentRepository
@@ -62,17 +62,17 @@ class CategoryControllerTest @Autowired constructor(
         val created = categoryCreatePayloadMockFactory.create()
             .let { categoryRepository.create(it.toCategory()) }
 
-        val titleUpdatePayload = ArticleUpdatePayload(
-            title = Optional.of(RandomFactory.createString(10))
+        val payload = CategoryUpdatePayload(
+            name = Optional.of(RandomFactory.createString(10))
         )
-        val result = mockMvc.patch("/categories/${created.id}") { json(objectMapper.writeValueAsString(titleUpdatePayload)) }
+        val result = mockMvc.patch("/categories/${created.id}") { json(objectMapper.writeValueAsString(payload)) }
             .andExpect { status { isOk() } }
             .andReturn()
 
         val category: CategoryResponsePayload = objectMapper.readValue(result.response.contentAsString)
 
         assertNotNull(category.id)
-        assertEquals(category.name, created.name)
+        assertEquals(category.name, payload.name?.get())
         assertEquals(category.createdAt, created.createdAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
         assertEquals(category.updatedAt, created.updatedAt?.epochSecond?.let { Instant.ofEpochSecond(it) })
     }

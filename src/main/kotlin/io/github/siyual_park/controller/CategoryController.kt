@@ -1,11 +1,12 @@
 package io.github.siyual_park.controller
 
 import io.github.siyual_park.domain.Paginator
+import io.github.siyual_park.domain.category.CategoryCreatePayloadMapper
 import io.github.siyual_park.domain.category.CategoryDeleteExecutor
 import io.github.siyual_park.domain.category.CategoryResponsePayloadMapper
-import io.github.siyual_park.model.article.ArticleUpdatePayload
 import io.github.siyual_park.model.category.CategoryCreatePayload
 import io.github.siyual_park.model.category.CategoryResponsePayload
+import io.github.siyual_park.model.category.CategoryUpdatePayload
 import io.github.siyual_park.repository.CategoryRepository
 import io.github.siyual_park.repository.patch.JsonMergePatchFactory
 import io.swagger.annotations.Api
@@ -29,6 +30,7 @@ import java.util.stream.Stream
 @RequestMapping("/categories")
 class CategoryController(
     private val categoryRepository: CategoryRepository,
+    private val categoryCreatePayloadMapper: CategoryCreatePayloadMapper,
     private val categoryResponsePayloadMapper: CategoryResponsePayloadMapper,
     private val categoryDeleteExecutor: CategoryDeleteExecutor,
     private val jsonMergePatchFactory: JsonMergePatchFactory
@@ -39,7 +41,7 @@ class CategoryController(
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody payload: CategoryCreatePayload): CategoryResponsePayload {
-        return categoryRepository.create(payload.toCategory())
+        return categoryRepository.create(categoryCreatePayloadMapper.map(payload))
             .let { categoryResponsePayloadMapper.map(it) }
     }
 
@@ -47,7 +49,7 @@ class CategoryController(
     @ResponseStatus(HttpStatus.OK)
     fun update(
         @PathVariable("category-id") id: String,
-        @RequestBody payload: ArticleUpdatePayload
+        @RequestBody payload: CategoryUpdatePayload
     ): CategoryResponsePayload {
         return categoryRepository.updateById(id, jsonMergePatchFactory.create(payload))
             .let { categoryResponsePayloadMapper.map(it) }
